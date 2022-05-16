@@ -8,8 +8,8 @@ https://fvm.app/docs/getting_started/installation
 
 ## Getting Started
 
-- Flutter version using : 2.10.3 (stable at 3/3/2022)
-- Dart version using : 2.16.1
+- Flutter version using : 3.0.0 (stable at 11/5/2022)
+- Dart version using : 2.17.2
 - Platform android : 31, Build-tools : 30.0.2
 - Java version OpenJDK 11.0.11+9
 - Gradle version 6.7.1
