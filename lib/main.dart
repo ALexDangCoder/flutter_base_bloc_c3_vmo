@@ -30,25 +30,27 @@ void main() async {
 
 Future<void> _beforeRunApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _flavor;
+
   await EasyLocalization.ensureInitialized();
-
-  await Firebase.initializeApp();
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  // Listen for flavor triggered by iOS / android build
-  await const MethodChannel('flavor').invokeMethod<String>('getFlavor').then(
-    (String? flavor) async {
-      final appConfig = AppConfig.getInstance(flavorName: flavor);
-      log("App Config : ${appConfig!.apiBaseUrl}");
-    },
-  ).catchError(
-    (error) {
-      AppConfig.getInstance(flavorName: "development");
-
-      log("Error when set up enviroment $error");
-    },
+  await Firebase.initializeApp(
+    options: AppConfig.getInstance()!.flavorFirebaseOption,
   );
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   await setupInjection();
+}
+
+Future<void> get _flavor async {
+  await const MethodChannel('flavor')
+      .invokeMethod<String>('getFlavor')
+      .then((String? flavor) => AppConfig.getInstance(flavorName: flavor))
+      .catchError(
+    (error) {
+      log("Error when set up enviroment: $error");
+      AppConfig.getInstance(flavorName: AppFlavor.dev.name);
+    },
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -80,9 +82,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(400, 800),
-      builder: () => MaterialApp(
+      builder: (_) => MaterialApp(
         builder: (context, child) {
-          ScreenUtil.setContext(context);
           return child ?? const SizedBox();
         },
         title: 'Flutter Template',

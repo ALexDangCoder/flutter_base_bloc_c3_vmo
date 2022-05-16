@@ -1,7 +1,7 @@
 GREEN='\033[1;32m'
 WARNING='\033[1;33m'
 
-echo "${GREEN}========================Setup App Finish======================="
+echo "${GREEN}========================Setup App Start======================="
 if hash fvm 2>/dev/null; then
   echo "Using fvm flutter version"
   fvm flutter doctor -v

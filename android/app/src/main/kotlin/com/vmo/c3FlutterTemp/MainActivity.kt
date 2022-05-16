@@ -1,13 +1,22 @@
 package com.vmo.c3FlutterTemp
 
-import android.os.Bundle
+import androidx.annotation.NonNull
 import com.vmo.c3FlutterTemp.BuildConfig.FLAVOR
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity: FlutterActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MethodChannel(flutterEngine?.dartExecutor, "flavor").setMethodCallHandler { _, result -> result.success(FLAVOR) }
+class MainActivity : FlutterActivity() {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "flavor"
+        ).setMethodCallHandler { call, result ->
+            if (call.method == "getFlavor") {
+                println("Flavor : $FLAVOR")
+                result.success(FLAVOR)
+            }
+        }
     }
 }

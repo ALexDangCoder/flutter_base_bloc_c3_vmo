@@ -1,5 +1,12 @@
+import 'package:clean_architechture/firebase/firebase_options_staging.dart'
+    as staging;
+import 'package:clean_architechture/firebase/firebase_options_dev.dart' as dev;
+import 'package:clean_architechture/firebase/firebase_options.dart' as prod;
+
+import 'package:firebase_core/firebase_core.dart';
+
 enum AppFlavor {
-  development,
+  dev,
   staging,
   production,
 }
@@ -17,7 +24,7 @@ class AppConfig {
 
   static AppConfig devConfig = AppConfig(
     apiBaseUrl: 'https://api.dev2.setel.my/api/',
-    appFlavor: AppFlavor.development,
+    appFlavor: AppFlavor.dev,
   );
 
   static AppConfig stagingConfig = AppConfig(
@@ -30,10 +37,23 @@ class AppConfig {
     appFlavor: AppFlavor.production,
   );
 
-  static AppConfig? getInstance({flavorName}) {
+  FirebaseOptions get flavorFirebaseOption {
+    switch (_instance?.appFlavor) {
+      case AppFlavor.dev:
+        return dev.DefaultFirebaseOptions.currentPlatform;
+      case AppFlavor.staging:
+        return staging.DefaultFirebaseOptions.currentPlatform;
+      case AppFlavor.production:
+        return prod.DefaultFirebaseOptions.currentPlatform;
+      default:
+        return dev.DefaultFirebaseOptions.currentPlatform;
+    }
+  }
+
+  static AppConfig? getInstance({String? flavorName}) {
     if (_instance == null) {
       switch (flavorName) {
-        case 'development':
+        case 'dev':
           {
             _instance = devConfig;
           }
