@@ -55,7 +55,7 @@ Future<void> _registerNetworkComponents() async {
   getIt.registerSingleton(dio);
 
   getIt
-      .registerSingleton(LoginApi(dio, baseUrl: dio.options.baseUrl + 'user/'));
+      .registerSingleton(LoginApi(dio, baseUrl: '${dio.options.baseUrl}user/'));
 }
 
 void _registerRepository() {
