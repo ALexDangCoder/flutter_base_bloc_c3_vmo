@@ -1,6 +1,6 @@
 # clean_architecture
 
-A new Flutter application with clean architecture
+Template Flutter application with clean architecture structure
 
 ## FVM Installation
 
@@ -131,7 +131,7 @@ project
 |   |   |   |   |--login_repository_impl             # repository impl will extend from login_repository abstract class
 |   |   |--utils                                     # utils for data layer
 |   |   |   |--exceptions                            # custom exception for data layer
-|   |   |   |--share_pref_manager.dart               # Share preferences manager class (include share preferences key enum)
+|   |   |   |--interceptors                          # custom interceptors for data layer
 |   |--domain                                        # domain layer for clean architecture 
 |   |   |--login                                     # login domain feature folder
 |   |   |   |--entities                              # entities folder
@@ -158,7 +158,7 @@ project
 |--.setup_app.sh                                     # Script set up app before run app
 |--.setup_env_config.sh                              # Script set up environment variable to display on ci/cd
 |--.setup_fastlane.sh                                # Script set up fastlane config before run ci/cd
-|--..build_android.sh                                # Script build android on local
+|--.build_android.sh                                # Script build android on local
 
 ```
 
