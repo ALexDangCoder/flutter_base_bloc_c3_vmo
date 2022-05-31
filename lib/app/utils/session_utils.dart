@@ -1,12 +1,8 @@
-import 'package:clean_architechture/data/utils/shared_pref_manager.dart';
-import 'package:flutter/material.dart';
-
-import '../config/theme.dart';
-import 'di/injection.dart';
+part of app_layer;
 
 class SessionUtils {
   static bool get isDarkTheme =>
-      getIt<AppTheme>().currentTheme == ThemeMode.dark;
+      getIt<ThemeManager>().currentTheme == ThemeMode.dark;
 
   static void saveAccessToken(String accessToken) =>
       getIt<SharedPreferencesManager>().putString(

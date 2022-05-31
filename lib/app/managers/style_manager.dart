@@ -1,8 +1,6 @@
-import 'package:clean_architechture/config/colors.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+part of app_layer;
 
-class AppTextStyle {
+class TextStyleManager {
   static TextStyle get label1 {
     return TextStyle(
       fontSize: 40.sp,
@@ -44,7 +42,7 @@ class AppTextStyle {
   static TextStyle get buttonLabel {
     return TextStyle(
       fontSize: 20.sp,
-      color: AppColors.blue,
+      color: ColorsManager.blue,
     );
   }
 }

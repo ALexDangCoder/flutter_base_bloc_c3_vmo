@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:alice/alice.dart';
-import 'package:clean_architechture/config/theme.dart';
-import 'package:clean_architechture/utils/route/app_routing.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -12,8 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'config/app_config.dart';
-import 'utils/di/injection.dart';
+import 'app/app.dart';
 
 void main() async {
   await _beforeRunApp();
@@ -34,7 +31,7 @@ Future<void> _beforeRunApp() async {
 
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(
-    options: AppConfig.getInstance()!.flavorFirebaseOption,
+    options: ConfigManager.getInstance()!.flavorFirebaseOption,
   );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -44,11 +41,11 @@ Future<void> _beforeRunApp() async {
 Future<void> get _flavor async {
   await const MethodChannel('flavor')
       .invokeMethod<String>('getFlavor')
-      .then((String? flavor) => AppConfig.getInstance(flavorName: flavor))
+      .then((String? flavor) => ConfigManager.getInstance(flavorName: flavor))
       .catchError(
     (error) {
       log("Error when set up enviroment: $error");
-      AppConfig.getInstance(flavorName: AppFlavor.dev.name);
+      ConfigManager.getInstance(flavorName: FlavorManager.dev.name);
     },
   );
 }
@@ -62,7 +59,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  AppTheme appTheme = getIt<AppTheme>();
+  ThemeManager appTheme = getIt<ThemeManager>();
 
   @override
   void initState() {
@@ -82,7 +79,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(400, 800),
-      builder: (_) => MaterialApp(
+      builder: (_, __) => MaterialApp(
         builder: (context, child) {
           return child ?? const SizedBox();
         },
@@ -92,8 +89,8 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         initialRoute: RouteDefine.loginScreen.name,
         onGenerateRoute: AppRouting.generateRoute,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        theme: ThemeManager.lightTheme,
+        darkTheme: ThemeManager.darkTheme,
         themeMode: appTheme.currentTheme,
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,

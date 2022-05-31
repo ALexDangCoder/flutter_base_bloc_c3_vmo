@@ -108,17 +108,17 @@ project
 |--assets                                            # application all assets
 |   |--images                                        # application image assets
 |   |--fonts                                         # application font assets
+|--fastlane                                          # config ci/cd using fastlane
 |--ios                                               # ios dir
 |--lib                                               # main project dart lib entry point
-|   |--config                                        # configuration for project
-|   |   |--app_config.dart                           # config enum flavor and baseURL (development, staging, production)
-|   |   |--colors.dart                               # config for color
-|   |   |--navigation_util.dart                      # config navigation key and nested navigation key
-|   |   |--styles.dart                               # config for text styles
-|   |   |--theme.dart                                # config for theme for project
-|   |--core                                          # core project include string extension, int extension, double extension,... 
-|   |   |--string.dart                               # string extension function
-|   |   |--double.dart                               # double extension function
+|   |--app                                           # application layer for clean architecture 
+|   |   |--core                                      # core folder include string extension,...
+|   |   |--di                                        # dependencies injection registration for project
+|   |   |--manager                                   # manager folder include style manager, other resource manager
+|   |   |--multi-languages                           # localization for project, using easy_localization and google sheet generator csv
+|   |   |--route                                     # route config for project, include generateRoute and route define all screen of project
+|   |   |--utils                                     # utils for application layer
+|   |   |--app.dart                                  # library app_layer using for import and combine most of application layer files
 |   |--data                                          # data layer for clean architecture 
 |   |   |--login                                     # login feature folder
 |   |   |   |--api                                   # api folder
@@ -147,24 +147,18 @@ project
 |   |   |   |   |--login_screen.dart                 # login ui frame
 |   |   |   |   |--widgets                           # widgets folder for nested widget in login feature
 |   |   |   |--login_route.dart                      # login route class define BlocProvider for Bloc class of login feature
-|   |--utils                                         # utility folder for project
-|   |   |--di                                        # dependencies injection registration for project
-|   |   |--multi-languages                           # localization for project, using easy_localization and google sheet generator csv
-|   |   |--route                                     # route config for project, include generateRoute and route define all screen of project
-|   |   |--session_utils.dart                        # session utility for project like getAccessToken or something using common most
 |   |--main.dart                                     # main config Material App and runApp
 |--test                                              # unit test
 |--web
 |--.gitignore                                        # ignore file of git
-|--fastlane                                          # config ci/cd using fastlane
 |--README.md                                         # ReadMe for this project
 |--analysis_options.yaml                             # lint rule configuration, config rule here
 |--.gitlab-ci.yml                                    # config ci/cd for gitlab
 |--pubspec.yaml                                      # dart package management file, add new dependencies here
-|--.setup_app.sh                                     # Script to set up app before run app
-|--.setup_env_config.sh                              # Script to set up environment variable to display on ci/cd
-|--.setup_fastlane.sh                                # Script to set up fastlane config before run ci/cd
-|--..build_android.sh                                # Script to build android on local
+|--.setup_app.sh                                     # Script set up app before run app
+|--.setup_env_config.sh                              # Script set up environment variable to display on ci/cd
+|--.setup_fastlane.sh                                # Script set up fastlane config before run ci/cd
+|--..build_android.sh                                # Script build android on local
 
 ```
 
@@ -199,7 +193,7 @@ BlocProvider.value(
 
 for usage (in Widgets), **always** use
 
-`context.boc<PumpsBloc>().add(AddPumps());`
+`context.read<PumpsBloc>().add(AddPumps());`
 
 instead of
 
@@ -292,7 +286,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
 - We using library [change_app_package_name](https://pub.dev/packages/change_app_package_name) for
   easy and fast to change all package name on android and IOS
 - Using terminal : flutter pub run change_app_package_name:main "newPackageName"
-- Example : flutter pub run change_app_package_name:main com.vmo.newApp
+- Example : flutter pub run change_app_package_name:main com.domain.newApp
 
 ## Using fastlane
 

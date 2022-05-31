@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:clean_architechture/utils/multi-languages/multi_languages_utils.dart';
+import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
 import 'package:dio/dio.dart';
 
 class ApiException {

@@ -5,7 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:clean_architechture/config/theme.dart';
+import 'package:clean_architechture/app/app.dart';
 import 'package:clean_architechture/presentation/home/ui/home_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -14,8 +14,8 @@ import 'utilities/test_utilitiy.dart';
 
 void main() {
   setUpAll(() {
-    GetIt.I.registerLazySingleton<AppTheme>(
-      () => AppTheme(),
+    GetIt.I.registerLazySingleton<ThemeManager>(
+      () => ThemeManager(),
     );
   });
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

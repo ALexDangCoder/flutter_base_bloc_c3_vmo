@@ -1,4 +1,5 @@
-import 'package:clean_architechture/config/navigation_util.dart';
+import 'package:clean_architechture/app/app.dart';
+import 'package:clean_architechture/app/managers/constant_manager.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog {
@@ -23,7 +24,7 @@ class LoadingDialog {
         children: [
           const CircularProgressIndicator(),
           Container(
-              margin: const EdgeInsets.only(left: 15),
+              margin: EdgeInsets.only(left: PaddingManager.p16),
               child: const Text("Loading...")),
         ],
       ),

@@ -1,14 +1,4 @@
-import 'package:alice/alice.dart';
-import 'package:clean_architechture/config/app_config.dart';
-import 'package:clean_architechture/config/navigation_util.dart';
-import 'package:clean_architechture/config/theme.dart';
-import 'package:clean_architechture/data/login/api/login_api.dart';
-import 'package:clean_architechture/data/login/repositories/login_repository_impl.dart';
-import 'package:clean_architechture/data/utils/shared_pref_manager.dart';
-import 'package:clean_architechture/domain/login/repositories/login_repository.dart';
-import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+part of app_layer;
 
 GetIt getIt = GetIt.instance;
 
@@ -22,14 +12,14 @@ Future _registerAppComponents() async {
   final sharedPreferencesManager = await SharedPreferencesManager.getInstance();
   getIt.registerSingleton<SharedPreferencesManager>(sharedPreferencesManager!);
 
-  final appTheme = AppTheme();
+  final appTheme = ThemeManager();
   getIt.registerSingleton(appTheme);
 }
 
 Future<void> _registerNetworkComponents() async {
   final dio = Dio(
     BaseOptions(
-      baseUrl: AppConfig.getInstance()!.apiBaseUrl,
+      baseUrl: ConfigManager.getInstance()!.apiBaseUrl,
       connectTimeout: 10000,
     ),
   );

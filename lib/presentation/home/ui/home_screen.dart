@@ -1,8 +1,5 @@
-import 'package:clean_architechture/config/styles.dart';
-import 'package:clean_architechture/config/theme.dart';
-import 'package:clean_architechture/utils/di/injection.dart';
-import 'package:clean_architechture/utils/multi-languages/multi_languages_utils.dart';
-import 'package:clean_architechture/utils/route/app_routing.dart';
+import 'package:clean_architechture/app/app.dart';
+import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,19 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
               "\nHeight Ratio : ${ScreenUtil().scaleHeight} "
               "\nText Ratio : ${ScreenUtil().scaleText} "
               "\n$defaultTargetPlatform",
-              style: AppTextStyle.label3,
+              style: TextStyleManager.label3,
             ),
           ),
           Text(
             "Aspect Ratio : ${ScreenUtil().pixelRatio}",
-            style: AppTextStyle.label3,
+            style: TextStyleManager.label3,
           ),
           Text(
             LocaleKeys.msg.tr(
               namedArgs: {"userName": "Hoang"},
               args: ["All"],
             ),
-            style: AppTextStyle.label3,
+            style: TextStyleManager.label3,
           ),
           OutlinedButton(
             onPressed: () {
@@ -58,16 +55,16 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Text(
               "Get Size",
-              style: AppTextStyle.label3,
+              style: TextStyleManager.label3,
             ),
           ),
           OutlinedButton(
             onPressed: () {
-              getIt<AppTheme>().changeTheme();
+              getIt<ThemeManager>().changeTheme();
             },
             child: Text(
               "Change Theme",
-              style: AppTextStyle.label3,
+              style: TextStyleManager.label3,
             ),
           ),
           OutlinedButton(
@@ -76,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: Text(
               "Move To List User Screen",
-              style: AppTextStyle.label3,
+              style: TextStyleManager.label3,
             ),
           ),
         ],
