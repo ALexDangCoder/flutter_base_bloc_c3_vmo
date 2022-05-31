@@ -1,12 +1,11 @@
 import 'dart:developer';
 
-import 'package:clean_architechture/config/app_config.dart';
-import 'package:clean_architechture/config/styles.dart';
+import 'package:clean_architechture/app/app.dart';
+import 'package:clean_architechture/app/managers/constant_manager.dart';
+import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
 import 'package:clean_architechture/gen/assets.gen.dart';
 import 'package:clean_architechture/presentation/common/dialog/loading_dialog.dart';
 import 'package:clean_architechture/presentation/login/bloc/login_bloc.dart';
-import 'package:clean_architechture/utils/multi-languages/multi_languages_utils.dart';
-import 'package:clean_architechture/utils/route/app_routing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,8 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Center(
                 child: Text(
-                  "Login Screen ${LocaleKeys.title.tr()} ${Intl.getCurrentLocale()} ${AppConfig.getInstance()!.appFlavor}",
-                  style: AppTextStyle.label3,
+                  "Login Screen ${LocaleKeys.title.tr()} ${Intl.getCurrentLocale()} ${ConfigManager.getInstance()!.appFlavor}",
+                  style: TextStyleManager.label3,
                 ),
               ),
               MaterialButton(
@@ -57,15 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                 },
                 color: Colors.green,
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(PaddingManager.p8),
                 child: Text(
                   "Login",
-                  style: AppTextStyle.label3,
+                  style: TextStyleManager.label3,
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: SizeManager.s10),
               MaterialButton(
                 onPressed: () {
                   context.read<LoginBloc>().add(
@@ -77,15 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                 },
                 color: Colors.red,
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(PaddingManager.p8),
                 child: Text(
                   "Login Error",
-                  style: AppTextStyle.label3,
+                  style: TextStyleManager.label3,
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: SizeManager.s10),
               MaterialButton(
                 onPressed: () async {
                   context.setLocale(const Locale("vi", "VN"));
@@ -93,11 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   setState(() {});
                 },
                 color: Colors.blue,
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(PaddingManager.p8),
                 child: Text(
                   "Change Locale to Viet Nam",
                   textAlign: TextAlign.center,
-                  style: AppTextStyle.label3,
+                  style: TextStyleManager.label3,
                 ),
               ),
               Assets.images.cashIcon1.svg(),

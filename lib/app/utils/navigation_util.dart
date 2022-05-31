@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+part of app_layer;
 
 class NavigationUtil {
   static final GlobalKey<NavigatorState> _rootNavigator = GlobalKey();

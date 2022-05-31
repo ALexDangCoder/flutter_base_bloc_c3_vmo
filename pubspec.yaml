@@ -42,7 +42,7 @@ dependencies:
   json_annotation: ^4.5.0
 
   #Localization library
-  sheet_loader_localization: ^0.0.8
+  sheet_loader_localization: 0.0.8
   easy_localization: ^3.0.1
   easy_localization_loader: ^1.0.0
 
@@ -50,9 +50,9 @@ dependencies:
   flutter_lints: ^2.0.1
 
   #Firebase library
-  firebase_analytics: ^9.1.8
-  firebase_crashlytics: ^2.8.0
-  firebase_core: ^1.17.0
+  firebase_analytics: ^9.1.9
+  firebase_crashlytics: ^2.8.1
+  firebase_core: ^1.17.1
 
   #Storage library
   shared_preferences: ^2.0.15
@@ -62,9 +62,9 @@ dependencies:
   cupertino_icons: ^1.0.4
   cached_network_image: ^3.2.1
   flutter_svg: ^1.0.3
-  flutter_screenutil: ^5.5.3+1
+  flutter_screenutil: ^5.5.3+2
   pull_to_refresh: ^2.0.0
-  change_app_package_name: ^1.0.0
+  change_app_package_name: ^1.1.0
 
 dev_dependencies:
   build_runner: ^2.1.11
