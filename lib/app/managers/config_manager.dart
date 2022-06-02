@@ -64,8 +64,10 @@ class ConfigManager {
           }
           break;
       }
+
       return _instance;
     }
+
     return _instance;
   }
 }

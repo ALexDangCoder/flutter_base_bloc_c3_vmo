@@ -13,8 +13,10 @@ class LoadingDialog {
     bool isVisible = false;
     Navigator.popUntil(context, (route) {
       isVisible = route is PopupRoute;
+
       return !isVisible;
     });
+
     return isVisible;
   }
 
@@ -24,8 +26,9 @@ class LoadingDialog {
         children: [
           const CircularProgressIndicator(),
           Container(
-              margin: EdgeInsets.only(left: PaddingManager.p16),
-              child: const Text("Loading...")),
+            margin: EdgeInsets.only(left: PaddingManager.p16),
+            child: const Text("Loading..."),
+          ),
         ],
       ),
     );

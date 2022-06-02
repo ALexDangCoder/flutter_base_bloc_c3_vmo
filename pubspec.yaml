@@ -46,9 +46,6 @@ dependencies:
   easy_localization: ^3.0.1
   easy_localization_loader: ^1.0.0
 
-  #Linter library
-  flutter_lints: ^2.0.1
-
   #Firebase library
   firebase_analytics: ^9.1.9
   firebase_crashlytics: ^2.8.1
@@ -72,6 +69,8 @@ dev_dependencies:
   retrofit_generator: ^4.0.1
   flutter_test:
     sdk: flutter
+  dart_code_metrics: ^4.15.2
+  flutter_lints: ^2.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -8,12 +8,14 @@ https://fvm.app/docs/getting_started/installation
 
 ## Getting Started
 
-- Flutter version using : 3.0.0 (stable at 11/5/2022)
-- Dart version using : 2.17.2
-- Platform android : 31, Build-tools : 30.0.2
-- Java version OpenJDK 11.0.11+9
+- Flutter version using : 3.0.1 (stable at 20/5/2022)
+- Dart version using : 2.17.1
+- Platform android : 32, Build-tools : 32.1.0-rc1
+- Java version OpenJDK 11.0.12
 - Gradle version 7.2
 - Build:gradle 7.1.3
+- XCode: 13.4
+- CocoaPods version 1.11.3
 
 ### Configure Firebase Multi Flavor
 
@@ -54,6 +56,10 @@ Step 2 : Create new Configuration with build flavor value is :
 
 - Please run script ".setup_app.sh" in terminal (On MacOS if can't run this script please try "sh
   .setup_app.sh")
+
+### Linter
+
+- We're using two linter library, first is [flutter_lint](https://pub.dev/packages/flutter_lints/install), second is [dart_code_metrics](https://pub.dev/packages/dart_code_metrics) that'll help our code following coding convension better.
 
 ### Build APK
 

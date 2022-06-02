@@ -72,7 +72,6 @@ diawi_android_dev: #Job name
     - export BUILD_FLAVOR_KEY="dev"
     - sh .setup_env_config.sh $BUILD_FLAVOR_KEY
     - sh .setup_fastlane.sh
-#    - sh .build_android.sh $BUILD_FLAVOR_KEY
     - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
 
   tags:
