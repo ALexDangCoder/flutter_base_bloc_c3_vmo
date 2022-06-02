@@ -12,6 +12,7 @@ extension HexColor on Color {
     if (hexColor.length == 6) {
       hexColor = "FF$hexColor";
     }
+
     return Color(int.parse(hexColor, radix: 16));
   }
 }

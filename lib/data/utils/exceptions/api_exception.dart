@@ -24,6 +24,7 @@ class ApiException {
   ]) {
     if (error is DioError) return ApiException(exception: error);
     log("Error not from Dio: ${stackTrace.toString()}");
+
     return ApiException._(
       exception: error,
       errorCode: 0,

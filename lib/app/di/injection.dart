@@ -9,11 +9,12 @@ Future setupInjection() async {
 }
 
 Future _registerAppComponents() async {
-  final sharedPreferencesManager = await SharedPreferencesManager.getInstance();
-  getIt.registerSingleton<SharedPreferencesManager>(sharedPreferencesManager!);
+  final SharedPreferencesManager? sharePreferences =
+      await SharedPreferencesManager.getInstance();
+  getIt.registerSingleton<SharedPreferencesManager>(sharePreferences!);
 
   final appTheme = ThemeManager();
-  getIt.registerSingleton(appTheme);
+  getIt.registerLazySingleton(() => appTheme);
 }
 
 Future<void> _registerNetworkComponents() async {
@@ -44,14 +45,13 @@ Future<void> _registerNetworkComponents() async {
   );
   getIt.registerSingleton(dio);
 
-  getIt
-      .registerSingleton(LoginApi(dio, baseUrl: '${dio.options.baseUrl}user/'));
+  getIt.registerLazySingleton(
+    (() => LoginApi(dio, baseUrl: '${dio.options.baseUrl}user/')),
+  );
 }
 
 void _registerRepository() {
-  getIt.registerFactory<LoginRepository>(
-    () => LoginRepositoryImpl(
-      getIt<LoginApi>(),
-    ),
+  getIt.registerLazySingleton<LoginRepository>(
+    () => LoginRepositoryImpl(getIt<LoginApi>()),
   );
 }

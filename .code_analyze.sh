@@ -1,7 +1,7 @@
 GREEN='\033[1;32m'
 WARNING='\033[1;33m'
 
-echo "${GREEN}========================Setup App Start======================="
+echo "${GREEN}========================Code Analyze Start======================="
 if hash fvm 2>/dev/null; then
   echo "Using fvm flutter version"
   fvm flutter format . --set-exit-if-changed
@@ -12,4 +12,4 @@ else
   flutter format . --set-exit-if-changed
   flutter analyze
 fi
-echo "${GREEN}========================Setup App Finish======================="
+echo "${GREEN}========================Code Analyze Finish======================="
