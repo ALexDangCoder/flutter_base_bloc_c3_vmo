@@ -19,10 +19,9 @@ NAME_BRANCH = ENV["BRANCH_NAME"]
 COMMIT_TITLE = ENV["COMMIT_TITLE"]
 APP_NAME = ENV["APP_ANDROID_NAME"]
 BUILD_PATH_DEFAULT = "build/app/outputs/flutter-apk/app-#{PREFIX}-release.apk"
-BUILD_IOS_PATH = "build/ios"
-ARCHIVE_IOS_PATH = "build/ios#{APP_NAME}.ipa"
-GRADLE_PATH = 'android/'
 CHANGELOG = File.read("../release-note.txt")
+IS_ADHOC = ENV["EXPORT_METHOD"] === "ad-hoc"
+
 # These lane without platform is using for sharing lane
 desc "Upload build #{FLAVOR} to Diawi and Send to Google Chat"
 private_lane :uploadDiawiAndGoogleChat do |values|
@@ -42,10 +41,11 @@ private_lane :uploadDiawiAndGoogleChat do |values|
 		imageUrl: ENV['IMAGE_URL']
 	)
 end
+
 platform :android do
 	desc "Build Android Version Version #{FLAVOR}"
 	lane :buildAndroid do
-		gradle(task: "clean assemble#{FLAVOR}Release", project_dir: GRADLE_PATH)
+		gradle(task: "clean assemble#{FLAVOR}Release", project_dir: "android/")
 		puts "Finish build"
 		uploadDiawiAndGoogleChat(
 			filePath: "#{BUILD_PATH_DEFAULT}",
@@ -81,9 +81,9 @@ platform :ios do
 		)
 		getProvisionAndCertificate
 		build_app(workspace: "ios/Runner.xcworkspace", scheme: "#{PREFIX}",
-			output_directory: "#{BUILD_IOS_PATH}",
+			output_directory: "build/ios",
 			output_name: "#{APP_NAME}",
-			export_method: "ad-hoc",
+			export_method: ENV["EXPORT_METHOD"],
 			silent: true,
 			codesigning_identity: ENV["CODE_SIGNING"],
 			export_options: {
@@ -92,11 +92,15 @@ platform :ios do
 				}
 			}
 		)
+		# export_method enum: [development,ad-hoc,app-store]
+
 		puts "Finish build"
-		uploadDiawiAndGoogleChat(
-			filePath: "#{lane_context[SharedValues::IPA_OUTPUT_PATH]}",
-			platform: "IOS",
-		)
+		if IS_ADHOC
+		   uploadDiawiAndGoogleChat(
+			 filePath: "#{lane_context[SharedValues::IPA_OUTPUT_PATH]}",
+			 platform: "IOS",
+		   )
+		end
 	end
 
 	desc "TestFlight #{PREFIX} ios"
@@ -112,6 +116,11 @@ platform :ios do
 
 	desc "Get provision and certificate #{PREFIX} ios"
 	private_lane :getProvisionAndCertificate do
+		app_store_connect_api_key(
+           key_filepath: "ios/AuthKey.p8",
+           key_id: ENV["KEY_ID"],
+           issuer_id: ENV["ISSUER_ID"],
+        )
 		get_certificates(
 			generate_apple_certs: false,
 			filename: ENV["CER_FILE_NAME"],
@@ -120,7 +129,7 @@ platform :ios do
 			provisioning_name: ENV["PROVISION_NAME"],
 			app_identifier: ENV["IOS_BUNDLE"],
 			readonly: true,
-			adhoc: true,
+			adhoc: IS_ADHOC,
 			ignore_profiles_with_different_name: true,
 		)
 	end

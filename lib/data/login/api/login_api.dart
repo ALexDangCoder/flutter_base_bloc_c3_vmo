@@ -1,7 +1,10 @@
-import 'package:clean_architechture/data/login/models/request/login_request.dart';
-import 'package:clean_architechture/data/login/models/response/login_response.dart';
+// Package imports:
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+
+// Project imports:
+import 'package:clean_architechture/data/login/models/request/login_request.dart';
+import 'package:clean_architechture/data/login/models/response/login_response.dart';
 
 part 'login_api.g.dart';
 

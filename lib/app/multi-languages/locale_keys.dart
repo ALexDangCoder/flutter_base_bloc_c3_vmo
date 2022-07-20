@@ -1,6 +1,9 @@
 // ignore_for_file: unused_element
 
+// Dart imports:
 import 'dart:ui';
+
+// Package imports:
 import 'package:sheet_loader_localization/sheet_loader_localization.dart';
 
 part 'locale_keys.g.dart';

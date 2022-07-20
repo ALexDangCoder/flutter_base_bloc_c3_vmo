@@ -1,8 +1,13 @@
-import 'package:clean_architechture/app/app.dart';
-import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+// Project imports:
+import 'package:clean_architechture/app/app.dart';
+import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
