@@ -1,8 +1,13 @@
-import 'package:clean_architechture/app/app.dart';
-import 'package:clean_architechture/presentation/list_user/bloc/list_user_bloc.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+// Project imports:
+import 'package:clean_architechture/app/app.dart';
+import 'package:clean_architechture/presentation/list_user/bloc/list_user_bloc.dart';
 
 class ListUserScreen extends StatefulWidget {
   const ListUserScreen({Key? key}) : super(key: key);

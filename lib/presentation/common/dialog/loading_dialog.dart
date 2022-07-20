@@ -1,6 +1,9 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:clean_architechture/app/app.dart';
 import 'package:clean_architechture/app/managers/constant_manager.dart';
-import 'package:flutter/material.dart';
 
 class LoadingDialog {
   static void get hideLoadingDialog {

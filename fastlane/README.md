@@ -15,21 +15,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
-### android sendBuildToGoogleChat
+### android buildAndroid
 
 ```sh
-[bundle exec] fastlane android sendBuildToGoogleChat
+[bundle exec] fastlane android buildAndroid
 ```
 
-Send Build Android Version Dev
+Build Android Version Version Dev
 
-### android buildAndroidLocal
+### android uploadBuildAndroid
 
 ```sh
-[bundle exec] fastlane android buildAndroidLocal
+[bundle exec] fastlane android uploadBuildAndroid
 ```
 
-Build Android Version Local
+Send Build Android Dev
 
 ### android distribute
 
@@ -59,14 +59,6 @@ Build app dev ios
 ```
 
 TestFlight dev ios
-
-### ios getProvision
-
-```sh
-[bundle exec] fastlane ios getProvision
-```
-
-Get provision dev ios
 
 ----
 
