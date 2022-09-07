@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Project imports:
-import 'package:clean_architechture/app/app.dart';
-import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
+import '../../../app/app.dart';
+import '../../../app/multi-languages/multi_languages_utils.dart';
+
+// Project imports:
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

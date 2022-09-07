@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Project imports:
-import 'package:clean_architechture/app/app.dart';
-import 'package:clean_architechture/app/managers/constant_manager.dart';
-import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
-import 'package:clean_architechture/gen/assets.gen.dart';
-import 'package:clean_architechture/presentation/common/dialog/loading_dialog.dart';
-import 'package:clean_architechture/presentation/login/bloc/login_bloc.dart';
+import '../../../app/app.dart';
+import '../../../app/managers/constant_manager.dart';
+import '../../../app/multi-languages/multi_languages_utils.dart';
+import '../../../gen/assets.gen.dart';
+import '../../common/dialog/loading_dialog.dart';
+import '../bloc/login_bloc.dart';
+
+// Project imports:
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, state) {
+      listener: (BuildContext context, LoginState state) {
         switch (state.runtimeType) {
           case LoginSuccessState:
             LoadingDialog.hideLoadingDialog;

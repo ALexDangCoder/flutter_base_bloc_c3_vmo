@@ -1,7 +1,9 @@
 // Project imports:
-import 'package:clean_architechture/data/login/models/request/login_request.dart';
-import 'package:clean_architechture/domain/login/entities/user_entitiy.dart';
-import 'package:clean_architechture/domain/login/repositories/login_repository.dart';
+
+// Project imports:
+import '../../../data/login/models/request/login_request.dart';
+import '../entities/user_entitiy.dart';
+import '../repositories/login_repository.dart';
 
 class LoginUseCase {
   final LoginRepository _repository;

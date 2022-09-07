@@ -11,7 +11,7 @@ part 'list_user_event.dart';
 part 'list_user_state.dart';
 
 class ListUserBloc extends Bloc<ListUserEvent, ListUserState> {
-  List<String> items = [];
+  List<String> items = <String>[];
 
   ListUserBloc() : super(ListUserInitial());
 
@@ -37,9 +37,9 @@ class ListUserBloc extends Bloc<ListUserEvent, ListUserState> {
   Stream<ListUserState> _mapLoadMoreListUserToState() async* {
     yield LoadingListUser();
     await 2.seconds.delay;
-    var lastItem = int.parse(items.last);
+    int lastItem = int.parse(items.last);
     items.addAll(
-      [
+      <String>[
         (lastItem + 1).toString(),
         (lastItem + 2).toString(),
         (lastItem + 3).toString(),

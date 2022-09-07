@@ -6,8 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // Project imports:
-import 'package:clean_architechture/app/app.dart';
-import 'package:clean_architechture/presentation/list_user/bloc/list_user_bloc.dart';
+import '../../../app/app.dart';
+import '../bloc/list_user_bloc.dart';
+
+// Project imports:
 
 class ListUserScreen extends StatefulWidget {
   const ListUserScreen({Key? key}) : super(key: key);

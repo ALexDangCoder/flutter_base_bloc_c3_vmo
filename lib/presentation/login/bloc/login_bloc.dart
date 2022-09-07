@@ -3,9 +3,11 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 // Project imports:
-import 'package:clean_architechture/data/login/models/request/login_request.dart';
-import 'package:clean_architechture/data/utils/exceptions/api_exception.dart';
-import 'package:clean_architechture/domain/login/usecases/login_usecase.dart';
+import '../../../data/login/models/request/login_request.dart';
+import '../../../data/utils/exceptions/api_exception.dart';
+import '../../../domain/login/usecases/login_usecase.dart';
+
+// Project imports:
 
 part 'login_event.dart';
 

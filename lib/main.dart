@@ -64,7 +64,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeManager appTheme = getIt<ThemeManager>();
+  var appTheme = getIt<ThemeManager>();
 
   @override
   void initState() {
