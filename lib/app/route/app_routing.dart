@@ -8,16 +8,16 @@ enum RouteDefine {
 
 class AppRouting {
   static MaterialPageRoute generateRoute(RouteSettings settings) {
-    final routes = <String, WidgetBuilder>{
+    final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
       RouteDefine.loginScreen.name: (_) => LoginRoute.route,
       RouteDefine.homeScreen.name: (_) => HomeRoute.route,
       RouteDefine.listUserScreen.name: (_) => ListUserRoute.route,
     };
 
-    final routeBuilder = routes[settings.name];
+    final WidgetBuilder? routeBuilder = routes[settings.name];
 
     return MaterialPageRoute(
-      builder: (context) => routeBuilder!(context),
+      builder: (BuildContext context) => routeBuilder!(context),
       settings: RouteSettings(name: settings.name),
     );
   }

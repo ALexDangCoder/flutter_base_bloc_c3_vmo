@@ -2,7 +2,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
 // Project imports:
-import 'package:clean_architechture/domain/login/entities/user_entitiy.dart';
+import '../../../../domain/login/entities/user_entitiy.dart';
+
+// Project imports:
 
 part 'login_response.g.dart';
 

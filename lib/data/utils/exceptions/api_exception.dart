@@ -6,7 +6,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 // Project imports:
-import 'package:clean_architechture/app/multi-languages/multi_languages_utils.dart';
+import '../../../app/multi-languages/multi_languages_utils.dart';
+
+// Project imports:
 
 class ApiException {
   final int errorCode;
@@ -15,9 +17,9 @@ class ApiException {
   final DioError? networkError;
 
   ApiException._({
+    required this.exception,
     this.errorCode = 0,
     this.errorMessage = '',
-    required this.exception,
   }) : networkError = exception is DioError ? exception : null;
 
   String get displayError => toBeginningOfSentenceCase(errorMessage) ?? '';
