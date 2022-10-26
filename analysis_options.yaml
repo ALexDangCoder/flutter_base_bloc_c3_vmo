@@ -37,3 +37,7 @@ dart_code_metrics:
     - prefer-conditional-expressions
     - no-equal-then-else
     - avoid-unused-parameters
+    - avoid-shrink-wrap-in-lists
+    - avoid-border-all
+    - prefer-const-border-radius
+

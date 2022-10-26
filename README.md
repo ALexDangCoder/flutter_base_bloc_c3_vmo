@@ -11,14 +11,14 @@ https://fvm.app/docs/getting_started/installation
 
 ## Getting Started
 
-- Flutter version using : 3.3.0 (stable at 31/8/2022)
-- Dart version using : 2.18.0
+- Flutter version using : 3.3.5 (stable at 20/10/2022)
+- Dart version using : 2.18.2
 - DevTools version using : 2.15.0
 - Platform android : 33, Build-tools : 32.1.0-rc1
 - Java version OpenJDK 11.0.12
 - Gradle version 7.2
 - Build:gradle 7.1.3
-- XCode: 13.4.1
+- XCode: 14.0.1
 - CocoaPods version 1.11.3
 - Flutter extension version (Android Studio: 69.0.2, VsCode: 3.48.0)
 
@@ -74,6 +74,7 @@ Step 2 : Create new Configuration with build flavor value is :
   is [flutter_lint](https://pub.dev/packages/flutter_lints/install), second
   is [dart_code_metrics](https://pub.dev/packages/dart_code_metrics) that'll help our code following
   coding convension better.
+- Remember to run scripts ".code_analyze.sh" in scripts/.code_analyze.sh folder before push code.
 
 ### Build APK
 
