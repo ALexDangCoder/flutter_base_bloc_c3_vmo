@@ -34,7 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
             key: _keyRed,
             width: 375.w,
             height: 500.h,
-            color: Colors.red,
+            decoration: const BoxDecoration(
+              border: Border.fromBorderSide(BorderSide(color: Colors.blue)),
+              color: Colors.red,
+            ),
             child: Text(
               "Screen Width : ${ScreenUtil().screenWidth}  Height : ${ScreenUtil().screenHeight}"
               "\n$_containerSize "

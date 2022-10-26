@@ -44,6 +44,9 @@ test:
     - /^hotfix/.*$/
     - /^update/.*$/
     - develop
+  artifacts:
+    reports:
+      codequality: code-quality-report.json
 
 diawi_android_dev: #Job name
   stage: build # kind of job

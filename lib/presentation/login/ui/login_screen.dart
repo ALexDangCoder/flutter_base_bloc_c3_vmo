@@ -56,11 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialButton(
                 onPressed: () {
                   context.read<LoginBloc>().add(
-                        const LoginPressed(
-                          "userName",
-                          "password",
-                          false,
-                        ),
+                        const LoginPressed("userName", "password", false),
                       );
                 },
                 color: Colors.green,

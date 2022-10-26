@@ -55,6 +55,7 @@ coverage/lcov.info
 /ios/build
 /resources/
 ios/Podfile.lock
+code-quality-report.json
 
 .firebase
 Gemfile.lock

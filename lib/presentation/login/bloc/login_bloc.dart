@@ -22,10 +22,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         try {
           emit(LoginLoadingState());
           await loginUseCase.login(
-            LoginRequest(
-              userName: event.userName,
-              password: event.password,
-            ),
+            LoginRequest(userName: event.userName, password: event.password),
           );
           if (event.isError) {
             emit(const LoginErrorState("Fake error"));
