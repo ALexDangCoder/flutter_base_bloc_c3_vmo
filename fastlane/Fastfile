@@ -14,10 +14,13 @@ update_fastlane
 default_platform(:android)
 FLAVOR = ENV["FLAVOR"]
 PREFIX = ENV["PREFIX"]
+
+#Display User perform while send to google chat
 USER_PERFORM = ENV["USER_PERFORM"]
 NAME_BRANCH = ENV["BRANCH_NAME"]
 COMMIT_TITLE = ENV["COMMIT_TITLE"]
 APP_NAME = ENV["APP_ANDROID_NAME"]
+
 BUILD_PATH_DEFAULT = "build/app/outputs/flutter-apk/app-#{PREFIX}-release.apk"
 CHANGELOG = File.read("../release-note.txt")
 IS_ADHOC = ENV["EXPORT_METHOD"] === "ad-hoc"
@@ -38,7 +41,7 @@ private_lane :uploadDiawiAndGoogleChat do |values|
 		section1Title: "Branch #{NAME_BRANCH}",
 		section1Description: "Commit #{COMMIT_TITLE}",
 		buttonUrl: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
-		imageUrl: ENV['IMAGE_URL']
+		imageUrl: ENV['IMAGE_URL'],
 	)
 end
 
@@ -78,19 +81,16 @@ platform :ios do
 		cocoapods(
 			podfile: "ios/Podfile",
 			silent: true,
+			repo_update: true,
 		)
 		getProvisionAndCertificate
-		build_app(workspace: "ios/Runner.xcworkspace", scheme: "#{PREFIX}",
+		build_app(
+			workspace: "ios/Runner.xcworkspace",
+			scheme: "#{PREFIX}",
 			output_directory: "build/ios",
 			output_name: "#{APP_NAME}",
 			export_method: ENV["EXPORT_METHOD"],
 			silent: true,
-			codesigning_identity: ENV["CODE_SIGNING"],
-			export_options: {
-				provisioningProfiles: {
-					ENV["IOS_BUNDLE"] => ENV["PROVISION_NAME"],
-				}
-			}
 		)
 		# export_method enum: [development,ad-hoc,app-store]
 

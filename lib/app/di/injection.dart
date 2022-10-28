@@ -25,13 +25,6 @@ Future<void> _registerNetworkComponents() async {
     ),
   );
 
-  final Alice alice = Alice(
-    navigatorKey: NavigationUtil.rootKey,
-    showShareButton: false,
-  );
-
-  getIt.registerSingleton(alice);
-
   dio.interceptors.addAll(
     [
       PrettyDioLogger(
@@ -40,7 +33,6 @@ Future<void> _registerNetworkComponents() async {
         responseHeader: true,
         responseBody: true,
       ),
-      alice.getDioInterceptor(),
     ],
   );
   getIt.registerSingleton(dio);

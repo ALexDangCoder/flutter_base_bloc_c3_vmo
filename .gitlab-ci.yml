@@ -1,7 +1,7 @@
 image: cirrusci/flutter:stable
 
 stages:
-  - test
+  - code_quality_check
   - build
   - deploy
 
@@ -15,8 +15,8 @@ stages:
     - echo Build Version $BUILD_VERSION
     - echo Build Number $BUILD_NUMBER
 
-test:
-  stage: test
+code_quality_check:
+  stage: code_quality_check
   #  when: manual
   tags:
     - macmini-2014
@@ -44,15 +44,12 @@ test:
     - /^hotfix/.*$/
     - /^update/.*$/
     - develop
-  artifacts:
-    reports:
-      codequality: code-quality-report.json
 
 diawi_android_dev: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ test ]
+  needs: [ code_quality_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -72,7 +69,7 @@ diawi_android_dev: #Job name
   script:
     - export BUILD_FLAVOR="Dev"
     - export BUILD_FLAVOR_KEY="dev"
-    - sh scripts/.setup_env_config.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
     - sh scripts/.setup_env_gradle.sh
     - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
@@ -90,7 +87,7 @@ diawi_android_staging: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ test ]
+  needs: [ code_quality_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -110,7 +107,7 @@ diawi_android_staging: #Job name
   script:
     - export BUILD_FLAVOR="Staging"
     - export BUILD_FLAVOR_KEY="staging"
-    - sh scripts/.setup_env_config.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
     - sh scripts/.setup_env_gradle.sh
     - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
@@ -148,7 +145,7 @@ diawi_ios_dev: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ test ]
+  needs: [ code_quality_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -168,9 +165,9 @@ diawi_ios_dev: #Job name
   script:
     - export BUILD_FLAVOR="Dev"
     - export BUILD_FLAVOR_KEY="dev"
-    - sh scripts/.setup_env_config.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
-    - sh scripts/.ios_precache.sh
+    - sh scripts/.setup_ios_precache.sh
     - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
 
   tags:
@@ -186,7 +183,7 @@ testflight_staging: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ test ]
+  needs: [ code_quality_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -206,9 +203,9 @@ testflight_staging: #Job name
   script:
     - export BUILD_FLAVOR="Staging"
     - export BUILD_FLAVOR_KEY="staging"
-    - sh scripts/.setup_env_config.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
-    - sh scripts/.ios_precache.sh
+    - sh scripts/.setup_ios_precache.sh
     - bundle exec fastlane ios testFlightDistribute --env $BUILD_FLAVOR_KEY --verbose
 
   tags:

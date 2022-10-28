@@ -18,6 +18,8 @@ echo User name "$CI_COMMIT_AUTHOR"
 echo BRANCH_NAME="$CI_COMMIT_BRANCH"
 echo COMMIT_TITLE="$CI_COMMIT_TITLE"
 echo USER_PERFORM="$CI_COMMIT_AUTHOR"
+echo ISSUER_ID="$ISSUER_ID"
+echo KEY_ID="$KEY_ID"
 } >>fastlane/.env."$BUILD_FLAVOR_KEY"
 
 echo "========================Env $BUILD_FLAVOR_KEY File======================="
