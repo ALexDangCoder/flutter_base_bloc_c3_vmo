@@ -4,7 +4,6 @@ library app_layer;
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:alice/alice.dart';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
