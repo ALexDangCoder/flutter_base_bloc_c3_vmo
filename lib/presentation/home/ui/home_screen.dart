@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             LocaleKeys.msg.tr(
               namedArgs: {"userName": "Hoang"},
-              args: ["All"],
+              args: ["All"]
             ),
             style: TextStyleManager.label3,
           ),
