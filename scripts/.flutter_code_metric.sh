@@ -13,10 +13,10 @@ else
   RESULT=$(flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json)
 fi
 
-if [[ $RESULT == *"PERFORMANCE"* ]] || [[ $RESULT == *"WARNING"* ]] || [[ $RESULT == *"STYLE"* ]]; then
-    echo "${RED}----> Some files have code metric fatal errors, check Dart Code metric"
-    exit 1
-else
-    echo "----> All code metrics are good :)"
-fi
+# if [[ $RESULT == *"PERFORMANCE"* ]] || [[ $RESULT == *"WARNING"* ]] || [[ $RESULT == *"STYLE"* ]]; then
+#     echo "${RED}----> Some files have code metric fatal errors, check Dart Code metric"
+#     exit 1
+# else
+#     echo "----> All code metrics are good :)"
+# fi
 echo "${GREEN}========================Flutter Metric Finish======================="
