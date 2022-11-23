@@ -1,7 +1,7 @@
 image: cirrusci/flutter:stable
 
 stages:
-  # - code_quality
+  - code_quality
   - code_analyze_check
   - build
   - deploy
@@ -16,31 +16,32 @@ stages:
     - echo Build Version $BUILD_VERSION
     - echo Build Number $BUILD_NUMBER
 
-# code_quality:
-#   stage: code_quality
-#   image: dart
-#   before_script:
-#     - dart pub global activate dart_code_metrics
-#   script:
-#     - dart pub global run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json
-#   artifacts:
-#     reports:
-#       codequality: code-quality-report.json
+code_quality:
+  stage: code_quality
+  image: dart
+  before_script:
+    - dart pub global activate dart_code_metrics
+  script:
+    - dart pub global run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json
+  artifacts:
+    reports:
+      codequality: code-quality-report.json
 
-#   tags:
-#     - macmini-2014
+  tags:
+    - macmini-2014
 
-#   only:
-#     - /^bugfix/.*$/
-#     - /^feature/.*$/
-#     - /^hotfix/.*$/
-#     - /^update/.*$/
-#     - /^improve/.*$/
-#     - develop
+  only:
+    - /^bugfix/.*$/
+    - /^feature/.*$/
+    - /^hotfix/.*$/
+    - /^update/.*$/
+    - /^improve/.*$/
+    - master
+    - develop
 
 code_analyze_check:
   stage: code_analyze_check
-  # needs: [ code_quality ]
+  needs: [ code_quality ]
   tags:
     - macmini-2014
   cache:
