@@ -1,7 +1,8 @@
 image: cirrusci/flutter:stable
 
 stages:
-  - code_quality_check
+  - code_quality
+  - code_analyze_check
   - build
   - deploy
 
@@ -15,9 +16,31 @@ stages:
     - echo Build Version $BUILD_VERSION
     - echo Build Number $BUILD_NUMBER
 
-code_quality_check:
-  stage: code_quality_check
-  #  when: manual
+code_quality:
+  stage: code_quality
+  image: dart
+  before_script:
+    - dart pub global activate dart_code_metrics
+  script:
+    - dart pub global run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json
+  artifacts:
+    reports:
+      codequality: code-quality-report.json
+
+  tags:
+    - macmini-2014
+
+  only:
+    - /^bugfix/.*$/
+    - /^feature/.*$/
+    - /^hotfix/.*$/
+    - /^update/.*$/
+    - /^improve/.*$/
+    - develop
+
+code_analyze_check:
+  stage: code_analyze_check
+  needs: [ code_quality ]
   tags:
     - macmini-2014
   cache:
@@ -43,13 +66,14 @@ code_quality_check:
     - /^feature/.*$/
     - /^hotfix/.*$/
     - /^update/.*$/
+    - /^improve/.*$/
     - develop
 
 diawi_android_dev: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ code_quality_check ]
+  needs: [ code_analyze_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -81,13 +105,14 @@ diawi_android_dev: #Job name
     - /^feature/.*$/
     - /^hotfix/.*$/
     - /^update/.*$/
+    - /^improve/.*$/
     - develop
 
 diawi_android_staging: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ code_quality_check ]
+  needs: [ code_analyze_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -122,6 +147,7 @@ diawi_android_staging: #Job name
     - /^feature/.*$/
     - /^hotfix/.*$/
     - /^update/.*$/
+    - /^improve/.*$/
     - develop
 
 firebase_android_staging:
@@ -145,7 +171,7 @@ diawi_ios_dev: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ code_quality_check ]
+  needs: [ code_analyze_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -177,13 +203,14 @@ diawi_ios_dev: #Job name
     - /^feature/.*$/
     - /^hotfix/.*$/
     - /^update/.*$/
+    - /^improve/.*$/
     - develop
 
 testflight_staging: #Job name
   stage: build # kind of job
   when: manual
   allow_failure: true #Make to skip build step and deploy step
-  needs: [ code_quality_check ]
+  needs: [ code_analyze_check ]
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:

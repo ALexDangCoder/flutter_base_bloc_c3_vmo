@@ -11,4 +11,5 @@ fi
 if ! sh scripts/.format_import.sh; then
     exit 1
 fi
+
 echo "${GREEN}========================Code Analyze Finish======================="

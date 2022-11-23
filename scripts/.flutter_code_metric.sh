@@ -7,10 +7,10 @@ RESULT=""
 
 if hash fvm 2>/dev/null; then
   echo "Using fvm flutter version"
-  RESULT=$(fvm flutter pub run dart_code_metrics:metrics analyze lib)
+  RESULT=$(fvm flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json)
 else
   echo "Using local flutter version"
-  RESULT=$(flutter pub run dart_code_metrics:metrics analyze lib)
+  RESULT=$(flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json)
 fi
 
 if [[ $RESULT == *"PERFORMANCE"* ]] || [[ $RESULT == *"WARNING"* ]] || [[ $RESULT == *"STYLE"* ]]; then
