@@ -1,7 +1,8 @@
 GREEN='\033[1;32m'
 
 echo "${GREEN}========================Code Analyze Start======================="
-if ! $GITLAB_CI; then
+
+if [ -z "$GITLAB_CI" ]; then
     if ! sh scripts/.flutter_code_metric.sh; then
         exit 1
     fi

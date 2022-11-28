@@ -20,6 +20,8 @@ USER_PERFORM = ENV["USER_PERFORM"]
 NAME_BRANCH = ENV["BRANCH_NAME"]
 COMMIT_TITLE = ENV["COMMIT_TITLE"]
 APP_NAME = ENV["APP_ANDROID_NAME"]
+VERSION_NUMBER = ENV["VERSION_CODE"];
+VERSION_NAME = ENV["VERSION_NAME"];
 
 BUILD_PATH_DEFAULT = "build/app/outputs/flutter-apk/app-#{PREFIX}-release.apk"
 CHANGELOG = File.read("../release-note.txt")
@@ -28,7 +30,7 @@ IS_ADHOC = ENV["EXPORT_METHOD"] === "ad-hoc"
 # These lane without platform is using for sharing lane
 desc "Upload build #{FLAVOR} to Diawi and Send to Google Chat"
 private_lane :uploadDiawiAndGoogleChat do |values|
-	filePath = values[:filePath]
+	filePath = values[:filePath] 
 	platform = values[:platform]
 	puts filePath
 	puts platform
@@ -48,7 +50,15 @@ end
 platform :android do
 	desc "Build Android Version Version #{FLAVOR}"
 	lane :buildAndroid do
-		gradle(task: "clean assemble#{FLAVOR}Release", project_dir: "android/")
+		gradle(
+			task: "clean assemble#{FLAVOR}Release", 
+			project_dir: "android/",
+			properties: {
+				"android.injected.version.code" => VERSION_NUMBER,
+				"android.injected.version.name" => VERSION_NAME,
+			},
+
+		)
 		puts "Finish build"
 		uploadDiawiAndGoogleChat(
 			filePath: "#{BUILD_PATH_DEFAULT}",
@@ -84,6 +94,16 @@ platform :ios do
 			repo_update: true,
 		)
 		getProvisionAndCertificate
+		set_xcconfig_value(
+			path: 'ios/Flutter/Generated.xcconfig',
+			name: 'FLUTTER_BUILD_NAME',
+			value: VERSION_NAME,
+		)
+		set_xcconfig_value(
+			path: 'ios/Flutter/Generated.xcconfig',
+			name: 'FLUTTER_BUILD_NUMBER',
+			value: VERSION_NUMBER,
+		)
 		build_app(
 			workspace: "ios/Runner.xcworkspace",
 			scheme: "#{PREFIX}",
