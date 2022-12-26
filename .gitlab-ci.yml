@@ -1,7 +1,6 @@
-image: cirrusci/flutter:stable
-
 stages:
-  - code_quality
+  - flutter_setup
+  - code_quality_report
   - code_analyze_check
   - build
   - deploy
@@ -16,8 +15,40 @@ stages:
     - echo Build Version $BUILD_VERSION
     - echo Build Number $BUILD_NUMBER
 
-code_quality:
-  stage: code_quality
+.android_dev_template: &diawi_android_dev
+  script:
+    - export BUILD_FLAVOR="Dev"
+    - export BUILD_FLAVOR_KEY="dev"
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_env_gradle.sh
+    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
+
+.ios_dev_template: &diawi_ios_dev
+  script:
+    - export BUILD_FLAVOR="Dev"
+    - export BUILD_FLAVOR_KEY="dev"
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_ios_precache.sh
+    - sh scripts/.setup_credential_cicd.sh
+    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
+
+flutter_setup:
+  stage: flutter_setup
+  script:
+    - brew tap leoafarias/fvm
+    - brew install fvm
+    - echo Y | fvm global 3.3.10
+    - fvm flutter pub get
+    - fvm flutter doctor -v
+    
+  tags:
+    - swat-runner
+
+code_quality_report:
+  stage: code_quality_report
+  needs: [ flutter_setup ]
   image: dart
   before_script:
     - dart pub global activate dart_code_metrics
@@ -28,22 +59,13 @@ code_quality:
       codequality: code-quality-report.json
 
   tags:
-    - macmini-2014
-
-  only:
-    - /^bugfix/.*$/
-    - /^feature/.*$/
-    - /^hotfix/.*$/
-    - /^update/.*$/
-    - /^improve/.*$/
-    - master
-    - develop
+    - swat-runner
 
 code_analyze_check:
   stage: code_analyze_check
-  needs: [ code_quality ]
+  needs: [ code_quality_report ]
   tags:
-    - macmini-2014
+    - swat-runner
   cache:
     - key: ${CI_COMMIT_REF_SLUG}_pub-cache
       paths:
@@ -62,15 +84,6 @@ code_analyze_check:
 
   script:
     - sh scripts/.code_analyze.sh
-  only:
-    - /^bugfix/.*$/
-    - /^feature/.*$/
-    - /^hotfix/.*$/
-    - /^update/.*$/
-    - /^improve/.*$/
-    - develop
-    - master
-
   artifacts:
     reports:
       codequality: code-quality-report.json
@@ -96,27 +109,46 @@ diawi_android_dev: #Job name
 
   <<: *mobileBeforeScript
 
-  script:
-    - export BUILD_FLAVOR="Dev"
-    - export BUILD_FLAVOR_KEY="dev"
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_env_gradle.sh
-    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
+  <<: *diawi_android_dev
 
   tags:
-    - macmini-2014
+    - swat-runner
   only:
     - /^bugfix/.*$/
     - /^feature/.*$/
-    - /^hotfix/.*$/
     - /^update/.*$/
     - /^improve/.*$/
+
+
+auto_diawi_android_dev: #Job name
+  stage: build # kind of job
+  allow_failure: true #Make to skip build step and deploy step
+  needs: [ code_analyze_check ]
+  cache:
+    - key: ${CI_COMMIT_REF_SLUG}_pub-cache
+      paths:
+        - $CI_PROJECT_DIR/.pub-cache/
+    - key: ${CI_COMMIT_REF_SLUG}_generate-files
+      paths:
+        - $CI_PROJECT_DIR/lib/**/*.g.dart
+    - key: ${CI_COMMIT_REF_SLUG}_gen
+      paths:
+        - $CI_PROJECT_DIR/lib/gen/
+    - key: ${CI_COMMIT_REF_SLUG}_localization
+      paths:
+        - $CI_PROJECT_DIR/resources/
+
+  <<: *mobileBeforeScript
+
+  <<: *diawi_android_dev
+
+  tags:
+    - swat-runner
+  only:
     - develop
 
 diawi_android_staging: #Job name
   stage: build # kind of job
-  when: manual
   allow_failure: true #Make to skip build step and deploy step
   needs: [ code_analyze_check ]
   cache:
@@ -147,14 +179,9 @@ diawi_android_staging: #Job name
     paths:
       - build/app/outputs/flutter-apk/app-staging-release.apk
   tags:
-    - macmini-2014
+    - swat-runner
   only:
-    - /^bugfix/.*$/
-    - /^feature/.*$/
-    - /^hotfix/.*$/
-    - /^update/.*$/
-    - /^improve/.*$/
-    - develop
+    - /^release/.*$/
 
 firebase_android_staging:
   stage: deploy
@@ -165,13 +192,12 @@ firebase_android_staging:
   script:
     - export BUILD_FLAVOR_KEY="staging"
     - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_credential_cicd.sh
     - bundle exec fastlane distribute --env $BUILD_FLAVOR_KEY
   tags:
-    - macmini-2014
+    - swat-runner
   only:
     - /^release/.*$/
-    - /^update/.*$/
-    - /^hotfix/.*$/
 
 diawi_ios_dev: #Job name
   stage: build # kind of job
@@ -194,27 +220,47 @@ diawi_ios_dev: #Job name
 
   <<: *mobileBeforeScript
 
-  script:
-    - export BUILD_FLAVOR="Dev"
-    - export BUILD_FLAVOR_KEY="dev"
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_ios_precache.sh
-    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
+  <<: *diawi_ios_dev
+
 
   tags:
-    - macmini-2014
+    - swat-runner
   only:
     - /^bugfix/.*$/
     - /^feature/.*$/
-    - /^hotfix/.*$/
     - /^update/.*$/
     - /^improve/.*$/
-    - develop
 
+auto_diawi_ios_dev: #Job name
+  stage: build # kind of job
+  allow_failure: true #Make to skip build step and deploy step
+  needs: [ code_analyze_check ]
+  cache:
+    - key: ${CI_COMMIT_REF_SLUG}_pub-cache
+      paths:
+        - $CI_PROJECT_DIR/.pub-cache/
+    - key: ${CI_COMMIT_REF_SLUG}_generate-files
+      paths:
+        - $CI_PROJECT_DIR/lib/**/*.g.dart
+    - key: ${CI_COMMIT_REF_SLUG}_gen
+      paths:
+        - $CI_PROJECT_DIR/lib/gen/
+    - key: ${CI_COMMIT_REF_SLUG}_localization
+      paths:
+        - $CI_PROJECT_DIR/resources/
+
+  <<: *mobileBeforeScript
+
+  <<: *diawi_ios_dev
+
+
+  tags:
+    - swat-runner
+  only:
+    - develop
+    
 testflight_staging: #Job name
   stage: build # kind of job
-  when: manual
   allow_failure: true #Make to skip build step and deploy step
   needs: [ code_analyze_check ]
   cache:
@@ -239,11 +285,10 @@ testflight_staging: #Job name
     - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
     - sh scripts/.setup_ios_precache.sh
+    - sh scripts/.setup_credential_cicd.sh
     - bundle exec fastlane ios testFlightDistribute --env $BUILD_FLAVOR_KEY --verbose
 
   tags:
-    - macmini-2014
+    - swat-runner
   only:
     - /^release/.*$/
-    - /^hotfix/.*$/
-    - /^update/.*$/
