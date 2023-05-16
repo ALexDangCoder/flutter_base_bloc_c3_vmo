@@ -1,11 +1,8 @@
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// Package imports:
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// Project imports:
 import '../../../app/app.dart';
 import '../../../app/multi-languages/multi_languages_utils.dart';
 

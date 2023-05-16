@@ -1,11 +1,8 @@
-// Dart imports:
 import 'dart:developer';
 import 'dart:io';
 
-// Package imports:
 import 'package:dio/dio.dart';
 
-// Project imports:
 import '../../../app/multi-languages/multi_languages_utils.dart';
 
 // Project imports:
@@ -40,14 +37,14 @@ class ApiException {
 
   factory ApiException({required DioError exception}) {
     switch (exception.type) {
-      case DioErrorType.response:
+      case DioErrorType.badResponse:
         return _handleErrorWithResponse(exception);
       case DioErrorType.cancel:
         return ApiException._(
           exception: exception,
           errorMessage: LocaleKeys.cancelled,
         );
-      case DioErrorType.connectTimeout:
+      case DioErrorType.connectionTimeout:
       case DioErrorType.receiveTimeout:
       case DioErrorType.sendTimeout:
         return ApiException._(
@@ -119,7 +116,7 @@ ApiException _handleErrorWithResponse(DioError exception) {
 }
 
 final _timeOutMessages = {
-  DioErrorType.connectTimeout: LocaleKeys.connectTimeout,
+  DioErrorType.badResponse: LocaleKeys.connectTimeout,
   DioErrorType.receiveTimeout: LocaleKeys.receiveTimeout,
   DioErrorType.sendTimeout: LocaleKeys.sendTimeout,
 };

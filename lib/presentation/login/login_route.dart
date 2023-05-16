@@ -1,10 +1,7 @@
-// Flutter imports:
 import 'package:flutter/widgets.dart';
 
-// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// Project imports:
 import '../../app/app.dart';
 import '../../domain/login/repositories/login_repository.dart';
 import '../../domain/login/usecases/login_usecase.dart';

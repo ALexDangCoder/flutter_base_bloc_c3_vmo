@@ -20,8 +20,8 @@ Future _registerAppComponents() async {
 Future<void> _registerNetworkComponents() async {
   final dio = Dio(
     BaseOptions(
-      baseUrl: ConfigManager.getInstance()!.apiBaseUrl,
-      connectTimeout: 10000,
+      baseUrl: ConfigManager.getInstance().apiBaseUrl,
+      connectTimeout: const Duration(seconds: 10),
     ),
   );
 

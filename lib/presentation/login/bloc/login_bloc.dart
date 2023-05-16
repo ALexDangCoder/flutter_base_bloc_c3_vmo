@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-// Project imports:
 import '../../../data/login/models/request/login_request.dart';
 import '../../../data/utils/exceptions/api_exception.dart';
 import '../../../domain/login/usecases/login_usecase.dart';

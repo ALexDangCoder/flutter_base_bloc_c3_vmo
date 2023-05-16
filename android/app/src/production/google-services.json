@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:863569946908:android:b89fa009e8dd77219372d9",
+        "mobilesdk_app_id": "1:863569946908:android:3c9c3bdf727ac4df9372d9",
         "android_client_info": {
           "package_name": "com.vmo.c3FlutterTemp"
         }
@@ -43,7 +43,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:863569946908:android:2bb3653912f7837a9372d9",
+        "mobilesdk_app_id": "1:863569946908:android:674721c185ca32cc9372d9",
         "android_client_info": {
           "package_name": "com.vmo.c3FlutterTemp.dev"
         }
@@ -79,7 +79,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:863569946908:android:96d7c73c950576f79372d9",
+        "mobilesdk_app_id": "1:863569946908:android:02ea180d32a406179372d9",
         "android_client_info": {
           "package_name": "com.vmo.c3FlutterTemp.staging"
         }

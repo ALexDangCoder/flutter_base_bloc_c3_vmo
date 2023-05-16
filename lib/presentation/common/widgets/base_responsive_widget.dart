@@ -1,4 +1,3 @@
-// Flutter imports:
 import 'package:flutter/material.dart';
 
 class BaseResponsiveWidget extends StatelessWidget {

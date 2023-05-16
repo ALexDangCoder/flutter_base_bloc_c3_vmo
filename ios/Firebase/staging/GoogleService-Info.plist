@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>220484531646-toqvr881veda9a0gruvtolqm3uj6f51d.apps.googleusercontent.com</string>
+	<string>863569946908-bq1oqlvmjsl9r4v4ppfr7ecoppqgpqva.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.220484531646-toqvr881veda9a0gruvtolqm3uj6f51d</string>
+	<string>com.googleusercontent.apps.863569946908-bq1oqlvmjsl9r4v4ppfr7ecoppqgpqva</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAYLXx3DJw4kvPXoXYzuIhYdBrLhhNMYXg</string>
+	<string>AIzaSyCg3Fp-7PoCuAfXiZ_MHDvMP9eaBL2YEHk</string>
 	<key>GCM_SENDER_ID</key>
-	<string>220484531646</string>
+	<string>863569946908</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.hoangnh.cleanArchitechture</string>
+	<string>com.vmo.c3FlutterTemp.staging</string>
 	<key>PROJECT_ID</key>
-	<string>project-base-a6be6</string>
+	<string>flutter-temp-clean</string>
 	<key>STORAGE_BUCKET</key>
-	<string>project-base-a6be6.appspot.com</string>
+	<string>flutter-temp-clean.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:220484531646:ios:bea038a3658898261635ef</string>
+	<string>1:863569946908:ios:6f53f56d11f4a0479372d9</string>
 </dict>
 </plist>

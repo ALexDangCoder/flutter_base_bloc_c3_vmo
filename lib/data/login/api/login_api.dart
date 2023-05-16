@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-// Project imports:
 import '../models/request/login_request.dart';
 import '../models/response/login_response.dart';
 
