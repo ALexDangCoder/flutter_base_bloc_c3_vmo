@@ -1,11 +1,10 @@
-// Dart imports:
 import 'dart:developer';
+import 'dart:io';
 
-// Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Package imports:
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -13,7 +12,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// Project imports:
 import 'app/app.dart';
 
 void main() async {
@@ -34,10 +32,17 @@ Future<void> _beforeRunApp() async {
   await _flavor;
 
   await EasyLocalization.ensureInitialized();
-  await Firebase.initializeApp(
-    options: ConfigManager.getInstance()!.flavorFirebaseOption,
-  );
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  await Firebase.initializeApp();
+
+  if (!kDebugMode) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+
+      return true;
+    };
+  }
 
   await setupInjection();
 }
@@ -49,7 +54,14 @@ Future<void> get _flavor async {
       .catchError(
     (error) {
       log("Error when set up enviroment: $error");
-      ConfigManager.getInstance(flavorName: FlavorManager.dev.name);
+      //TODO: Change this later after config flavors for macos
+      //TODO: Remove podFile auto changing deployment target in macOS + iOS
+
+      return ConfigManager.getInstance(
+        flavorName: Platform.isMacOS
+            ? FlavorManager.production.name
+            : FlavorManager.dev.name,
+      );
     },
   );
 }

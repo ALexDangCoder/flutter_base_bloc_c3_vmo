@@ -3,17 +3,19 @@ RED='\033[0;31m'
 
 
 echo "${GREEN}========================Flutter Metric Start======================="
-RESULT=""
+RESULT=$?
 
 if hash fvm 2>/dev/null; then
   echo "Using fvm flutter version"
-  RESULT=$(fvm flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json)
+  fvm flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings lib
+  RESULT=$? 
 else
   echo "Using local flutter version"
-  RESULT=$(flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings --reporter=gitlab lib > code-quality-report.json)
+  flutter pub run dart_code_metrics:metrics analyze --fatal-style --fatal-performance --fatal-warnings lib
+  RESULT=$? 
 fi
 
-if [[ $RESULT == *"PERFORMANCE"* ]] || [[ $RESULT == *"WARNING"* ]] || [[ $RESULT == *"STYLE"* ]]; then
+if [[ $RESULT == "1" ]]; then
     echo "${RED}----> Some files have code metric fatal errors, check Dart Code metric"
     exit 1
 else

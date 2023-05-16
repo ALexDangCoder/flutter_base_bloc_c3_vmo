@@ -14,6 +14,7 @@ fi
 
 if [[ $RESULT == *"info •"* ]] || [[ $RESULT == *"warning •"* ]]; then
     echo "${RED}----> Some files have linter fatal errors, check Dart Analysis"
+    echo ${RESULT}
     exit 1
 else
     echo "----> All analyzes are good :)"

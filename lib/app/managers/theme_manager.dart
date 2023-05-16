@@ -13,7 +13,7 @@ class ThemeManager with ChangeNotifier {
   static ThemeData get lightTheme {
     return ThemeData(
       primarySwatch: Colors.blue,
-      backgroundColor: ColorsManager.white,
+      colorScheme: const ColorScheme.light(background: ColorsManager.white),
       scaffoldBackgroundColor: ColorsManager.white,
       brightness: Brightness.light,
     );
@@ -22,7 +22,7 @@ class ThemeManager with ChangeNotifier {
   static ThemeData get darkTheme {
     return ThemeData(
       primarySwatch: Colors.blue,
-      backgroundColor: ColorsManager.black,
+      colorScheme: const ColorScheme.dark(background: ColorsManager.black),
       scaffoldBackgroundColor: ColorsManager.black,
       brightness: Brightness.dark,
     );

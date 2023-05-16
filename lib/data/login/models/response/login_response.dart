@@ -1,7 +1,5 @@
-// Package imports:
 import 'package:json_annotation/json_annotation.dart';
 
-// Project imports:
 import '../../../../domain/login/entities/user_entitiy.dart';
 
 // Project imports:

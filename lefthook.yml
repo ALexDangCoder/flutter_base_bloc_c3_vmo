@@ -7,7 +7,7 @@ pre-commit:
   commands:
     pretty:
       glob: '*.dart'
-      run: flutter format {staged_files} && git add {staged_files}
+      run: dart format {staged_files} && git add {staged_files}
     linter:
       run: sh scripts/.flutter_analyze.sh
     format_import:

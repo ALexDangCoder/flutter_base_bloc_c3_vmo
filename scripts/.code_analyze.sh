@@ -10,7 +10,7 @@ fi
 if ! sh scripts/.flutter_analyze.sh; then
     exit 1
 fi
-flutter format . --set-exit-if-changed
+dart format . --set-exit-if-changed
 if ! sh scripts/.format_import.sh; then
     exit 1
 fi

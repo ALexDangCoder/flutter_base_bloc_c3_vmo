@@ -1,13 +1,9 @@
-// Dart imports:
 import 'dart:developer';
 
-// Flutter imports:
 import 'package:flutter/material.dart';
 
-// Package imports:
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// Project imports:
 import '../../../app/app.dart';
 import '../../../app/managers/constant_manager.dart';
 import '../../../app/multi-languages/multi_languages_utils.dart';
@@ -49,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Center(
                 child: Text(
-                  "Login Screen ${LocaleKeys.title.tr()} ${Intl.getCurrentLocale()} ${ConfigManager.getInstance()!.appFlavor}",
+                  "Login Screen ${LocaleKeys.title.tr()} ${Intl.getCurrentLocale()} ${ConfigManager.getInstance().appFlavor}",
                   style: TextStyleManager.label3,
                 ),
               ),
