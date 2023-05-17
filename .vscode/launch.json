@@ -90,6 +90,11 @@
                 "--flavor",
                 "production"
             ]
+        },
+        {
+            "name": "macOS",
+            "request": "launch",
+            "type": "dart"
         }
     ]
 }
