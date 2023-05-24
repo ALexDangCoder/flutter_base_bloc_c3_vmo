@@ -12,7 +12,7 @@
       "source.fixAll": true
     },
     "[plist]": {
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": true
     },
     "[dart]": {
       "editor.formatOnSave": true,
