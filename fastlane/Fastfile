@@ -20,28 +20,39 @@ USER_PERFORM = ENV["USER_PERFORM"]
 NAME_BRANCH = ENV["BRANCH_NAME"]
 COMMIT_TITLE = ENV["COMMIT_TITLE"]
 APP_NAME = ENV["APP_NAME"]
-VERSION_NUMBER = ENV["VERSION_CODE"];
+VERSION_CODE = ENV["VERSION_CODE"];
 VERSION_NAME = ENV["VERSION_NAME"];
 
-ANDROID_BUILD_PATH = "build/app/outputs/flutter-apk/app-#{PREFIX}-release.apk"
-IOS_BUILD_PATH = "build/ios/app-#{PREFIX}-release.ipa"
-CHANGELOG = File.read("../release-note.txt")
-RELEASE_NOTE = File.read("../distribution-note.txt")
-IS_ADHOC = ENV["EXPORT_METHOD"] === "ad-hoc"
+#Android Build Variable
+APK_BUILD_PATH_DEFAULT = "build/app/outputs/flutter-apk/app-#{PREFIX}-release.apk"
+APPBUNDLE_BUILD_PATH_DEFAULT = "build/app/outputs/bundle/#{PREFIX}Release/app-#{PREFIX}-release.aab"
+IS_APPBUNDLE = ENV["IS_APPBUNDLE"] === "true"
 
-# These lane without platform is using for sharing lane
+#IOS Build Variable
+IOS_BUILD_PATH_DEFAULT = "build/ios/app-#{PREFIX}-release.ipa"
+IS_ADHOC = ENV["EXPORT_METHOD"] === "ad-hoc"
+IS_APPSTORE = ENV["EXPORT_METHOD"] === "app-store"
+
+#Google chat release note
+CHANGELOG = File.read("../release-note.txt")
+
+#Appcenter DISTRIBUTION note
+DISTRIBUTION_NOTE = File.read("../distribution-note.txt")
+
+# Sharing lane for both platform
 desc "Upload build #{FLAVOR} to Diawi and Send to Google Chat"
 private_lane :uploadDiawiAndGoogleChat do |values|
 	filePath = values[:filePath] 
 	platform = values[:platform]
 	puts filePath
 	puts platform
-	diawi(token: ENV['DIAWI_TOKEN'], file: "#{filePath}")
+	diawireborn(token: ENV['DIAWI_TOKEN'], file: "#{filePath}")
+	puts "Change log get #{CHANGELOG}"
 	google_chat(
 		webhook: ENV['GOOGLE_CHAT_URL'],
-		title: "Build #{platform} #{FLAVOR} by #{USER_PERFORM}",
+		title: "Build #{platform} #{FLAVOR}",
 		description: "#{CHANGELOG}",
-		buttonTitle: "DOWNLOAD #{APP_NAME} #{VERSION_NAME} (#{VERSION_NUMBER})",
+		buttonTitle: "DOWNLOAD #{APP_NAME} #{VERSION_NAME} (#{VERSION_CODE})",
 		section1Title: "Branch #{NAME_BRANCH}",
 		section1Description: "Commit #{COMMIT_TITLE}",
 		buttonUrl: lane_context[SharedValues::UPLOADED_FILE_LINK_TO_DIAWI],
@@ -49,23 +60,28 @@ private_lane :uploadDiawiAndGoogleChat do |values|
 	)
 end
 
+desc "Upload build #{FLAVOR} to Appcenter and Send to Google Chat"
 private_lane :uploadAppCenterAndGoogleChat do |values|
 	filePath = values[:filePath] 
 	platform = values[:platform]
 	appName = values[:appName]
+	apiToken = values[:apiToken]
+	puts filePath
+	puts platform
+	puts "Release note get #{DISTRIBUTION_NOTE}"
 	appcenter_upload(
   		file: "#{filePath}",
 		app_name: "#{appName}",
   		notify_testers: true,
 		destinations: "*",
-		release_notes: "#{RELEASE_NOTE}",
-		api_token: ENV["APPCENTER_API_TOKEN"]
+		release_notes: "#{DISTRIBUTION_NOTE}",
+		api_token: "#{apiToken}"
 	)
 	google_chat(
 		webhook: ENV['GOOGLE_CHAT_URL'],
 		title: "AppCenter #{platform} #{FLAVOR}",
-		description: "#{RELEASE_NOTE}",
-		buttonTitle: "DOWNLOAD #{APP_NAME} #{VERSION_NAME} (#{VERSION_NUMBER})",
+		description: "#{DISTRIBUTION_NOTE}",
+		buttonTitle: "DOWNLOAD #{APP_NAME} #{VERSION_NAME} (#{VERSION_CODE})",
 		section1Title: "Branch #{NAME_BRANCH}",
 		section1Description: "Commit #{COMMIT_TITLE}",
 		buttonUrl: "https://appcenter.ms/users/#{ENV["APPCENTER_OWNER_NAME"]}/apps/#{appName}/distribute",
@@ -74,45 +90,63 @@ private_lane :uploadAppCenterAndGoogleChat do |values|
 end
 
 platform :android do
-	desc "Build Android #{FLAVOR}"
+	desc "Build Android Version Version #{FLAVOR}"
 	lane :buildAndroid do
-		gradle(
-			task: "clean assemble#{FLAVOR}Release", 
-			project_dir: "android/",
-			properties: {
-				"versionCode" => VERSION_NUMBER,
-				"versionName" => VERSION_NAME,
-			},
-		)
-		puts "Finish build"
-		uploadDiawiAndGoogleChat(
-			filePath: "#{ANDROID_BUILD_PATH}",
-			platform: "Android",
-		)
+		if IS_APPBUNDLE
+			gradle(
+				task: "clean bundle#{FLAVOR}Release", 
+				project_dir: "android/",
+				properties: {
+					"versionCode" => VERSION_CODE,
+					"versionName" => VERSION_NAME,
+				},
+			)
+			uploadAppCenterAndGoogleChat(
+				filePath: "#{APPBUNDLE_BUILD_PATH_DEFAULT}",
+				platform: "Android",
+				appName: ENV["APPCENTER_ANDROID_APP_NAME"],
+				apiToken: ENV["APPCENTER_ANDROID_API_TOKEN"],
+			)
+		else
+			gradle(
+				task: "clean assemble#{FLAVOR}Release", 
+				project_dir: "android/",
+				properties: {
+					"versionCode" => VERSION_CODE,
+					"versionName" => VERSION_NAME,
+				},
+			)
+			uploadDiawiAndGoogleChat(
+				filePath: "#{APK_BUILD_PATH_DEFAULT}",
+				platform: "Android",
+			)
+		end
 	end
 
 	desc "Deploy Android #{FLAVOR} via AppCenter"
 	lane :appCenterAndroidDistribute do 
 		uploadAppCenterAndGoogleChat(
-			filePath: "#{ANDROID_BUILD_PATH}",
+			filePath: "#{APK_BUILD_PATH_DEFAULT}",
 			platform: "Android",
 			appName: ENV["APPCENTER_ANDROID_APP_NAME"],
+			apiToken: ENV["APPCENTER_ANDROID_API_TOKEN"],
 		)
 	end
 
-	desc "Deploy Android #{FLAVOR} via Firebase"
-	lane :firebaseAndroidDistribute do
-		firebase_app_distribution(
-			app: ENV['FIREBASE_APP_ID'],
-			groups: "testers",
-			apk_path: "#{ANDROID_BUILD_PATH}",
-			firebase_cli_token: ENV['FIREBASE_TOKEN']
+	desc "Deploy Android #{FLAVOR} via Play Console"
+	lane :playstoreDistribute do 
+		upload_to_play_store(
+			aab: "#{APPBUNDLE_BUILD_PATH_DEFAULT}",
+			release_status: "draft",
+			version_code: VERSION_CODE,
+			version_name: VERSION_NAME,
 		)
 	end
 end
 
+
 platform :ios do
-	desc "Build iOS #{PREFIX}"
+	desc "Build app #{PREFIX} ios"
 	lane :buildIOS do
 		cocoapods(
 			podfile: "ios/Podfile",
@@ -128,12 +162,13 @@ platform :ios do
 		set_xcconfig_value(
 			path: 'ios/Flutter/Generated.xcconfig',
 			name: 'FLUTTER_BUILD_NUMBER',
-			value: VERSION_NUMBER,
+			value: VERSION_CODE,
 		)
+		ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120" 
 		build_app(
 			workspace: "ios/Runner.xcworkspace",
 			scheme: "#{PREFIX}",
-			output_directory: "build/ios",
+			output_directory: "build/ios/",
 			output_name: "app-#{PREFIX}-release.ipa",
 			export_method: ENV["EXPORT_METHOD"],
 			silent: true,
@@ -149,22 +184,34 @@ platform :ios do
 		end
 	end
 
-	desc "Deploy IOS #{FLAVOR} via TestFlight"
+	desc "Deploy IOS #{PREFIX} via Testflight"
 	lane :testFlightDistribute do
+		puts "Release note get #{DISTRIBUTION_NOTE}"
 		upload_to_testflight(
 			submit_beta_review: false,
 			skip_waiting_for_build_processing: true,
-			ipa: "#{IOS_BUILD_PATH}",
-			api_key_path: "fastlane/app_store_connect_token.json",
+			ipa: "#{IOS_BUILD_PATH_DEFAULT}",
+			api_key_path: ENV["APPSTORE_TOKEN_PATH"],
 		)
 	end
 
 	desc "Deploy IOS #{FLAVOR} via AppCenter"
 	lane :appCenterIOSDistribute do 
 		uploadAppCenterAndGoogleChat(
-			filePath: "#{IOS_BUILD_PATH}",
+			filePath: "#{IOS_BUILD_PATH_DEFAULT}",
 			platform: "IOS",
 			appName: ENV["APPCENTER_IOS_APP_NAME"],
+			apiToken: ENV["APPCENTER_IOS_API_TOKEN"]
+		)
+	end
+
+	desc "Deploy IOS #{PREFIX} via Appstore"
+	lane :appstoreDistribute do
+		upload_to_app_store(
+			app_version: VERSION_NAME,
+			ipa: "#{IOS_BUILD_PATH_DEFAULT}",
+			api_key_path: ENV["APPSTORE_TOKEN_PATH"],
+			automatic_release: false
 		)
 	end
 
@@ -173,7 +220,7 @@ platform :ios do
 		get_certificates(
 			generate_apple_certs: false,
 			filename: ENV["CER_FILE_NAME"],
-			api_key_path: "fastlane/app_store_connect_token.json",
+			api_key_path: ENV["APPSTORE_TOKEN_PATH"],
 		)
 		get_provisioning_profile(
 			provisioning_name: ENV["PROVISION_NAME"],
@@ -182,7 +229,9 @@ platform :ios do
 			adhoc: IS_ADHOC,
 			ignore_profiles_with_different_name: true,
 			cert_id: ENV["CER_ID"],
-			api_key_path: "fastlane/app_store_connect_token.json",
+			api_key_path: ENV["APPSTORE_TOKEN_PATH"],
 		)
 	end
 end
+
+

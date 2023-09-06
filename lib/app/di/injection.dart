@@ -2,48 +2,46 @@ part of app_layer;
 
 GetIt getIt = GetIt.instance;
 
-Future setupInjection() async {
-  await _registerAppComponents();
-  await _registerNetworkComponents();
-  _registerRepository();
-}
+@injectableInit
+Future<void> setupInjection() => getIt.init();
 
-Future _registerAppComponents() async {
-  final SharedPreferencesManager? sharePreferences =
-      await SharedPreferencesManager.getInstance();
-  getIt.registerSingleton<SharedPreferencesManager>(sharePreferences!);
+@module
+abstract class RegisterModule {
+  @Named('BaseUrl')
+  String get baseUrl => ConfigManager.getInstance().apiBaseUrl;
+  @Named('Timeout')
+  Duration get timeout => const Duration(seconds: 10);
 
-  final appTheme = ThemeManager();
-  getIt.registerLazySingleton(() => appTheme);
-}
+  @preResolve
+  Future<SharedPreferencesManager> get prefs =>
+      SharedPreferencesManager.getInstance();
 
-Future<void> _registerNetworkComponents() async {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: ConfigManager.getInstance().apiBaseUrl,
-      connectTimeout: const Duration(seconds: 10),
-    ),
-  );
+  @lazySingleton
+  ThemeManager get themeManager => ThemeManager();
 
-  dio.interceptors.addAll(
-    [
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseHeader: true,
-        responseBody: true,
+  @lazySingleton
+  Dio dio(
+    @Named('BaseUrl') String url,
+    @Named('Timeout') Duration timeout,
+  ) {
+    return Dio(
+      BaseOptions(
+        baseUrl: url,
+        connectTimeout: timeout,
+        contentType: 'application/json',
       ),
-    ],
-  );
-  getIt.registerSingleton(dio);
+    )..interceptors.add(
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+          responseBody: true,
+        ),
+      );
+  }
 
-  getIt.registerLazySingleton(
-    (() => LoginApi(dio, baseUrl: '${dio.options.baseUrl}user/')),
-  );
-}
-
-void _registerRepository() {
-  getIt.registerLazySingleton<LoginRepository>(
-    () => LoginRepositoryImpl(getIt<LoginApi>()),
-  );
+  @lazySingleton
+  LoginApi loginApi(@Named('BaseUrl') String url) {
+    return LoginApi(getIt<Dio>(), baseUrl: '$url/user');
+  }
 }

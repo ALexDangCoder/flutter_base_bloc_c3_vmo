@@ -32,18 +32,37 @@ default:
     - echo Build Version $BUILD_VERSION
     - echo Build Number $BUILD_NUMBER
 
+.trigger_manual_rule:
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ "/^bugfix/.*$/" || $CI_COMMIT_BRANCH =~ "/^feature/.*$/" || $CI_COMMIT_BRANCH =~ "/^update/.*$/" || $CI_COMMIT_BRANCH =~ "/^improve/.*$/" || $CI_COMMIT_BRANCH =~ "/^milestones/.*$/"
+      when: manual
+
+.android_template: &diawi_android
+  script:
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_env_gradle.sh
+    - sh scripts/.setup_credential_cicd.sh
+    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
+
+.ios_template: &diawi_ios
+  script:
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_ios_precache.sh
+    - sh scripts/.setup_credential_cicd.sh
+    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
+
 flutter_setup:
   stage: flutter_setup
   script:
     - brew tap leoafarias/fvm
     - brew install fvm
-    - echo Y | fvm global 3.10.0
-    - fvm flutter pub get
-    - fvm flutter doctor -v
+    - echo Y | fvm global 3.13.0
 
 code_analyze_check:
   stage: code_analyze_check
-  needs: [ flutter_setup ]
+  needs: [flutter_setup]
   <<: *mobileBeforeScript
   script:
     - sh scripts/.code_analyze.sh
@@ -51,171 +70,140 @@ code_analyze_check:
     reports:
       codequality: code-quality-report.json
 
-diawi_android_dev: 
-  stage: build 
-  needs: [ code_analyze_check ]
-  allow_failure: true 
-  <<: *mobileBeforeScript
+diawi_android_dev:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
   variables:
     BUILD_FLAVOR_KEY: "dev"
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_env_gradle.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY 
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
-    - if: $CI_COMMIT_BRANCH =~ "/^bugfix/.*$/" || $CI_COMMIT_BRANCH =~ "/^feature/.*$/" || $CI_COMMIT_BRANCH =~ "/^update/.*$/" || $CI_COMMIT_BRANCH =~ "/^improve/.*$/" 
-      when: manual
-
-auto_diawi_android_staging: 
-  stage: build 
-  allow_failure: true 
-  needs: [ code_analyze_check ]
   <<: *mobileBeforeScript
+  <<: *diawi_android
+  rules:
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: on_success
+
+diawi_android_staging:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
+  variables:
+    BUILD_FLAVOR_KEY: "staging"
+  <<: *mobileBeforeScript
+  <<: *diawi_android
+  rules:
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH =~ "/^release/.*$/"'
+      when: on_success
+
+deploy_app_center_android:
+  stage: deploy
+  when: manual
+  needs: [diawi_android_staging]
   variables:
     BUILD_FLAVOR_KEY: "staging"
   script:
     - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_env_gradle.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
-  artifacts:
-    paths:
-      - build/app/outputs/flutter-apk/app-staging-release.apk
-  only:
-    - /^release/.*$/
-
-firebase_android_staging:
-  stage: deploy
-  when: manual
-  needs: [ auto_diawi_android_staging ]
-  variables:
-    BUILD_FLAVOR_KEY: "staging"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane firebaseAndroidDistribute --env $BUILD_FLAVOR_KEY
-  only:
-    - /^release/.*$/
-
-android_production_diawi: 
-  stage: build 
-  allow_failure: true 
-  needs: [ code_analyze_check ]
-  <<: *mobileBeforeScript
-  variables:
-    BUILD_FLAVOR_KEY: "production"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_env_gradle.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane buildAndroid --env $BUILD_FLAVOR_KEY
-  artifacts:
-    paths:
-      - build/app/outputs/flutter-apk/app-production-release.apk
-  only:
-    - master
-    - feature/hoangnvm/ci-cd-setup-for-android-production   
-
-deploy_app_center_android_staging: 
-  stage: deploy
-  when: manual
-  needs: [ auto_diawi_android_staging ]
-  variables:
-    BUILD_FLAVOR_KEY: "staging"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
     - bundle exec fastlane android appCenterAndroidDistribute --env $BUILD_FLAVOR_KEY
   only:
-    - /^release/.*$/    
+    - /^release/.*$/
 
-diawi_ios_dev: 
-  stage: build 
-  allow_failure: true 
-  needs: [ code_analyze_check ]
-  <<: *mobileBeforeScript
+diawi_android_production:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
   variables:
-    BUILD_FLAVOR_KEY: "dev"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_ios_precache.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose  
+    BUILD_FLAVOR_KEY: "production"
+  <<: *mobileBeforeScript
+  <<: *diawi_android
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH == "master"'
       when: on_success
-    - if: $CI_COMMIT_BRANCH =~ "/^bugfix/.*$/" || $CI_COMMIT_BRANCH =~ "/^feature/.*$/" || $CI_COMMIT_BRANCH =~ "/^update/.*$/" || $CI_COMMIT_BRANCH =~ "/^improve/.*$/" 
+    - if: '$CI_COMMIT_BRANCH =~ "/^release/.*$/"'
       when: manual
 
-auto_diawi_ios_staging: 
-  stage: build 
-  allow_failure: true 
-  needs: [ code_analyze_check ]
-  <<: *mobileBeforeScript
+diawi_ios_dev:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
   variables:
-    BUILD_FLAVOR_KEY: "staging"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_ios_precache.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
-  artifacts:
-    paths:
-      - build/ios/app-staging-release.ipa
-  only:
-    - /^release/.*$/ 
+    BUILD_FLAVOR_KEY: "dev"
+  <<: *mobileBeforeScript
+  <<: *diawi_ios
+  rules:
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      when: on_success
 
-deploy_app_center_ios_staging: 
+diawi_ios_staging:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
+  variables:
+    BUILD_FLAVOR_KEY: "staging"
+  <<: *mobileBeforeScript
+  <<: *diawi_android
+  rules:
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH =~ "/^release/.*$/"'
+      when: on_success
+
+deploy_app_center_ios:
   stage: deploy
   when: manual
-  needs: [ auto_diawi_ios_staging ]
+  needs: [diawi_ios_staging]
   variables:
-    BUILD_FLAVOR_KEY: "staging"  
+    BUILD_FLAVOR_KEY: "staging"
   script:
     - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
     - bundle exec fastlane ios appCenterIOSDistribute --env $BUILD_FLAVOR_KEY
   only:
-    - /^release/.*$/    
+    - /^release/.*$/
 
-ios_production: 
-  stage: build 
-  allow_failure: true 
-  needs: [ code_analyze_check ]
-  <<: *mobileBeforeScript
+diawi_ios_production:
+  stage: build
+  allow_failure: true
+  needs: [code_analyze_check]
   variables:
-    BUILD_FLAVOR_KEY: "production"  
-  script:
-    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
-    - sh scripts/.setup_fastlane.sh
-    - sh scripts/.setup_ios_precache.sh
-    - sh scripts/.setup_credential_cicd.sh
-    - bundle exec fastlane ios buildIOS --env $BUILD_FLAVOR_KEY --verbose
-  artifacts:
-    paths:
-      - build/ios/app-production-release.ipa
-  only:
-    - master 
+    BUILD_FLAVOR_KEY: "production"
+  <<: *mobileBeforeScript
+  <<: *diawi_android
+  rules:
+    - !reference [.trigger_manual_rule, rules]
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH =~ "/^release/.*$/"'
+      when: manual
 
-deploy_testflight: 
+deploy_testflight:
   stage: deploy
   when: manual
-  needs: [ ios_production ]
+  needs: [diawi_ios_production]
   variables:
-    BUILD_FLAVOR_KEY: "production"  
+    BUILD_FLAVOR_KEY: "production"
   script:
+    - APP_STORE_CONNECT_TOKEN=$PRODUCTION_APP_STORE_CONNECT_KEY
     - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
     - sh scripts/.setup_fastlane.sh
     - sh scripts/.setup_credential_cicd.sh
     - bundle exec fastlane ios testFlightDistribute --env $BUILD_FLAVOR_KEY
   only:
-    - master 
+    - master
+
+deploy_appstore_ios:
+  stage: deploy
+  when: manual
+  needs: [diawi_ios_production]
+  variables:
+    BUILD_FLAVOR_KEY: "production"
+  script:
+    - APP_STORE_CONNECT_TOKEN=$PRODUCTION_APP_STORE_CONNECT_KEY
+    - sh scripts/.setup_gitlab_env_fastlane.sh $BUILD_FLAVOR_KEY
+    - sh scripts/.setup_fastlane.sh
+    - sh scripts/.setup_credential_cicd.sh
+    - bundle exec fastlane ios appstoreDistribute --env $BUILD_FLAVOR_KEY
+  only:
+    - master

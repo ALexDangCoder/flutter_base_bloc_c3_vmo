@@ -1,24 +1,11 @@
 part of 'list_user_bloc.dart';
 
-abstract class ListUserState extends Equatable {
-  const ListUserState();
-}
+@freezed
+class ListUserState with _$ListUserState {
+  const factory ListUserState({
+    @Default([]) List<String> users,
+    @Default(false) bool loading,
+  }) = _ListUserState;
 
-class ListUserInitial extends ListUserState {
-  @override
-  List<Object> get props => [];
-}
-
-class ShowListUser extends ListUserState {
-  final List<String> listUser;
-
-  const ShowListUser(this.listUser);
-
-  @override
-  List<Object> get props => [listUser];
-}
-
-class LoadingListUser extends ListUserState {
-  @override
-  List<Object> get props => [];
+  factory ListUserState.initial() => const ListUserState();
 }

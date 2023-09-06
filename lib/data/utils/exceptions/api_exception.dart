@@ -11,13 +11,13 @@ class ApiException {
   final int errorCode;
   final String errorMessage;
   final Object exception;
-  final DioError? networkError;
+  final DioException? networkError;
 
   ApiException._({
     required this.exception,
     this.errorCode = 0,
     this.errorMessage = '',
-  }) : networkError = exception is DioError ? exception : null;
+  }) : networkError = exception is DioException ? exception : null;
 
   String get displayError => toBeginningOfSentenceCase(errorMessage) ?? '';
 
@@ -25,7 +25,7 @@ class ApiException {
     Object error, [
     StackTrace? stackTrace,
   ]) {
-    if (error is DioError) return ApiException(exception: error);
+    if (error is DioException) return ApiException(exception: error);
     log("Error not from Dio: ${stackTrace.toString()}");
 
     return ApiException._(
@@ -35,18 +35,18 @@ class ApiException {
     );
   }
 
-  factory ApiException({required DioError exception}) {
+  factory ApiException({required DioException exception}) {
     switch (exception.type) {
-      case DioErrorType.badResponse:
+      case DioExceptionType.badResponse:
         return _handleErrorWithResponse(exception);
-      case DioErrorType.cancel:
+      case DioExceptionType.cancel:
         return ApiException._(
           exception: exception,
           errorMessage: LocaleKeys.cancelled,
         );
-      case DioErrorType.connectionTimeout:
-      case DioErrorType.receiveTimeout:
-      case DioErrorType.sendTimeout:
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.sendTimeout:
         return ApiException._(
           exception: exception,
           errorMessage: _timeOutMessages[exception.type]!,
@@ -74,7 +74,7 @@ class ApiException {
 /// Checking for 'error' and 'message' type of List is something that is
 /// already done previously. Not sure where does it impact on the whole
 /// application but we'll keep it for now.
-ApiException _handleErrorWithResponse(DioError exception) {
+ApiException _handleErrorWithResponse(DioException exception) {
   try {
     final errorBody = exception.response!.data;
 
@@ -116,7 +116,7 @@ ApiException _handleErrorWithResponse(DioError exception) {
 }
 
 final _timeOutMessages = {
-  DioErrorType.badResponse: LocaleKeys.connectTimeout,
-  DioErrorType.receiveTimeout: LocaleKeys.receiveTimeout,
-  DioErrorType.sendTimeout: LocaleKeys.sendTimeout,
+  DioExceptionType.badResponse: LocaleKeys.connectTimeout,
+  DioExceptionType.receiveTimeout: LocaleKeys.receiveTimeout,
+  DioExceptionType.sendTimeout: LocaleKeys.sendTimeout,
 };

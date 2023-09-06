@@ -11,8 +11,6 @@ import '../../../gen/assets.gen.dart';
 import '../../common/dialog/loading_dialog.dart';
 import '../bloc/login_bloc.dart';
 
-// Project imports:
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -24,17 +22,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-      listener: (BuildContext context, LoginState state) {
-        switch (state.runtimeType) {
-          case LoginSuccessState:
+      listener: (context, state) {
+        switch (state.status) {
+          case LoginStateStatus.success:
             LoadingDialog.hideLoadingDialog;
             Navigator.pushNamed(context, RouteDefine.homeScreen.name);
             break;
-          case LoginErrorState:
+          case LoginStateStatus.error:
             LoadingDialog.hideLoadingDialog;
             break;
-          case LoginLoadingState:
+          case LoginStateStatus.loading:
             LoadingDialog.showLoadingDialog(context);
+            break;
+          default:
             break;
         }
       },
@@ -52,7 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialButton(
                 onPressed: () {
                   context.read<LoginBloc>().add(
-                        const LoginPressed("userName", "password", false),
+                        const LoginEvent.logInPressed(
+                          "userName",
+                          "password",
+                          false,
+                        ),
                       );
                 },
                 color: Colors.green,
@@ -66,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
               MaterialButton(
                 onPressed: () {
                   context.read<LoginBloc>().add(
-                        const LoginPressed(
+                        const LoginEvent.logInPressed(
                           "userName",
                           "password",
                           true,

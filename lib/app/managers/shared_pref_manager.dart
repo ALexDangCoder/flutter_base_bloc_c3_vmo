@@ -8,11 +8,11 @@ class SharedPreferencesManager {
   static SharedPreferencesManager? _instance;
   static SharedPreferences? _sharedPreferences;
 
-  static Future<SharedPreferencesManager?> getInstance() async {
+  static Future<SharedPreferencesManager> getInstance() async {
     _instance ??= SharedPreferencesManager();
     _sharedPreferences ??= await SharedPreferences.getInstance();
 
-    return _instance;
+    return _instance!;
   }
 
   Future<bool> putDouble(SharedPreferenceKey key, String value) =>
