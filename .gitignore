@@ -67,3 +67,6 @@ fastlane/.env.
 *.mobileprovision
 node_modules
 *.jks
+*.config.dart
+*.freezed.dart
+*.g.dart

@@ -1,15 +1,7 @@
 part of 'list_user_bloc.dart';
 
-abstract class ListUserEvent extends Equatable {
-  const ListUserEvent();
-}
-
-class LoadMoreUser extends ListUserEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class GetListUser extends ListUserEvent {
-  @override
-  List<Object> get props => [];
+@freezed
+class ListUserEvent with _$ListUserEvent {
+  const factory ListUserEvent.get() = _Get;
+  const factory ListUserEvent.loadMore() = _LoadMore;
 }

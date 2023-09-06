@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,13 +53,9 @@ Future<void> get _flavor async {
       .catchError(
     (error) {
       log("Error when set up enviroment: $error");
-      //TODO: Change this later after config flavors for macos
-      //TODO: Remove podFile auto changing deployment target in macOS + iOS
 
       return ConfigManager.getInstance(
-        flavorName: Platform.isMacOS
-            ? FlavorManager.production.name
-            : FlavorManager.dev.name,
+        flavorName: FlavorManager.dev.name,
       );
     },
   );

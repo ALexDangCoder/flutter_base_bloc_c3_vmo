@@ -1,48 +1,44 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:time/time.dart';
 
+part 'list_user_bloc.freezed.dart';
 part 'list_user_event.dart';
-
 part 'list_user_state.dart';
 
+@injectable
 class ListUserBloc extends Bloc<ListUserEvent, ListUserState> {
-  List<String> items = <String>[];
-
-  ListUserBloc() : super(ListUserInitial());
-
-  ///Please using new version implement of bloc
-  Stream<ListUserState> mapEventToState(
-    ListUserEvent event,
-  ) async* {
-    if (event is GetListUser) {
-      yield* _mapGetListUserToState();
-    }
-    if (event is LoadMoreUser) {
-      yield* _mapLoadMoreListUserToState();
-    }
-  }
-
-  Stream<ListUserState> _mapGetListUserToState() async* {
-    yield LoadingListUser();
-    await 500.milliseconds.delay;
-    items = ["1", "2", "3", "4", "5", "6", "7", "8"];
-    yield ShowListUser(items);
-  }
-
-  Stream<ListUserState> _mapLoadMoreListUserToState() async* {
-    yield LoadingListUser();
-    await 2.seconds.delay;
-    int lastItem = int.parse(items.last);
-    items.addAll(
-      <String>[
-        (lastItem + 1).toString(),
-        (lastItem + 2).toString(),
-        (lastItem + 3).toString(),
-      ],
-    );
-    yield ShowListUser(items);
+  ListUserBloc() : super(ListUserState.initial()) {
+    on<ListUserEvent>((event, emit) async {
+      await event.when(
+        get: () async {
+          emit(state.copyWith(loading: true));
+          await 500.milliseconds.delay;
+          emit(
+            state.copyWith(
+              loading: false,
+              users: ["1", "2", "3", "4", "5", "6", "7", "8"],
+            ),
+          );
+        },
+        loadMore: () async {
+          emit(state.copyWith(loading: true));
+          await 2.seconds.delay;
+          int lastUser = int.parse(state.users.last);
+          emit(
+            state.copyWith(
+              loading: false,
+              users: [
+                ...state.users,
+                '${lastUser + 1}',
+                '${lastUser + 2}',
+                '${lastUser + 3}',
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 }

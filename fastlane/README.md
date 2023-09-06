@@ -21,23 +21,23 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane android buildAndroid
 ```
 
-Build Android Version Version Dev
+Build Android Version Version Production
 
-### android uploadBuildAndroid
-
-```sh
-[bundle exec] fastlane android uploadBuildAndroid
-```
-
-Send Build Android Dev
-
-### android distribute
+### android appCenterAndroidDistribute
 
 ```sh
-[bundle exec] fastlane android distribute
+[bundle exec] fastlane android appCenterAndroidDistribute
 ```
 
-Distribute To Firebase
+Deploy Android Production via AppCenter
+
+### android playstoreDistribute
+
+```sh
+[bundle exec] fastlane android playstoreDistribute
+```
+
+Deploy Android Production via Play Console
 
 ----
 
@@ -50,7 +50,7 @@ Distribute To Firebase
 [bundle exec] fastlane ios buildIOS
 ```
 
-Build app dev ios
+Build app production ios
 
 ### ios testFlightDistribute
 
@@ -58,7 +58,23 @@ Build app dev ios
 [bundle exec] fastlane ios testFlightDistribute
 ```
 
-TestFlight dev ios
+Deploy IOS production via Testflight
+
+### ios appCenterIOSDistribute
+
+```sh
+[bundle exec] fastlane ios appCenterIOSDistribute
+```
+
+Deploy IOS Production via AppCenter
+
+### ios appstoreDistribute
+
+```sh
+[bundle exec] fastlane ios appstoreDistribute
+```
+
+Deploy IOS production via Appstore
 
 ----
 

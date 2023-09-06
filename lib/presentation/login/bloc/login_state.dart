@@ -1,29 +1,13 @@
 part of 'login_bloc.dart';
 
-abstract class LoginState extends Equatable {
-  const LoginState();
-}
+enum LoginStateStatus { initial, loading, error, success }
 
-class LoginInitial extends LoginState {
-  @override
-  List<Object> get props => [];
-}
+@freezed
+class LoginState with _$LoginState {
+  const factory LoginState({
+    @Default(LoginStateStatus.initial) LoginStateStatus status,
+    @Default('') String errorMessage,
+  }) = _LoginState;
 
-class LoginSuccessState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class LoginErrorState extends LoginState {
-  final String errorMessage;
-
-  const LoginErrorState(this.errorMessage);
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoginLoadingState extends LoginState {
-  @override
-  List<Object> get props => [];
+  factory LoginState.initial() => const LoginState();
 }

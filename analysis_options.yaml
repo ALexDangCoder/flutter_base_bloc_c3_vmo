@@ -6,8 +6,12 @@ analyzer:
   exclude:
     - lib/generated/intl/*.dart
     - lib/**/*.g.dart
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
     - lib/utils/multi-languages/*.dart
     - lib/gen/*.dart
+  errors:
+    invalid_annotation_target: ignore
 
 linter:
   rules:
@@ -40,4 +44,3 @@ dart_code_metrics:
     - avoid-shrink-wrap-in-lists
     - avoid-border-all
     - prefer-const-border-radius
-

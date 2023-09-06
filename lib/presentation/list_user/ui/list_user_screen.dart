@@ -40,38 +40,32 @@ class _ListUserScreenState extends State<ListUserScreen> {
       ),
       body: BlocConsumer<ListUserBloc, ListUserState>(
         listener: (context, state) {
-          switch (state.runtimeType) {
-            case LoadingListUser:
-              break;
-            case ShowListUser:
-              _refreshController.refreshCompleted();
-              _refreshController.loadComplete();
-              break;
+          if (!state.loading) {
+            _refreshController.refreshCompleted();
+            _refreshController.loadComplete();
           }
         },
-        buildWhen: (_, current) => current is ShowListUser,
         builder: (context, state) {
-          if (state is ShowListUser) {
-            return SmartRefresher(
-              controller: _refreshController,
-              enablePullDown: true,
-              enablePullUp: true,
-              onRefresh: () => context.read<ListUserBloc>().add(GetListUser()),
-              onLoading: () => context.read<ListUserBloc>().add(LoadMoreUser()),
-              child: ListView.separated(
-                itemBuilder: (context, index) => Center(
-                  child: Text(
-                    "User $index",
-                    style: TextStyleManager.label3,
-                  ),
+          return SmartRefresher(
+            controller: _refreshController,
+            enablePullDown: true,
+            enablePullUp: true,
+            onRefresh: () =>
+                context.read<ListUserBloc>().add(const ListUserEvent.get()),
+            onLoading: () => context
+                .read<ListUserBloc>()
+                .add(const ListUserEvent.loadMore()),
+            child: ListView.separated(
+              itemBuilder: (context, index) => Center(
+                child: Text(
+                  "User $index",
+                  style: TextStyleManager.label3,
                 ),
-                separatorBuilder: (context, index) => const Divider(),
-                itemCount: state.listUser.length,
               ),
-            );
-          }
-
-          return Container();
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: state.users.length,
+            ),
+          );
         },
       ),
     );
