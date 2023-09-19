@@ -4,6 +4,7 @@ stages:
   - sonarqube-check
   - build
   - sonarqube-vulnerability-report
+  - deploy
 
 default:
   interruptible: true
